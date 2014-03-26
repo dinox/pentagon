@@ -10,6 +10,13 @@
 #define INT_TOP (Interval(-INT_MAX, INT_MAX))
 
 // ---- Classes ----
+
+/*
+ *  --- Interval class ---
+ *  Top is represented by [-int_max, int_max]
+ *  Bot is represented by all [a, b] such that a > b
+ *  All others is straightforward [l, h]
+ */
 struct Interval {
     int l, h;
 
@@ -19,40 +26,30 @@ struct Interval {
         h = high;
     }
 
-    // Copy constructor
-    Interval(const Interval &src) {
-        l = src.l;
-        h = src.h;
-    }
-
-    // Overload assignment operator
-    Interval& operator= (const Interval &src) {
-        l = src.l;
-        h = src.h;
-        return *this;
-    }
-
     // Overload equals
-    bool operator== (const Interval &other) const {
+    inline bool operator== (const Interval &other) const {
         return l == other.l && h == other.h;
     }
 
-    Interval *join (Interval other, Interval *dest) {
-        dest->l = MIN(l, other.l);
-        dest->h = MAX(h, other.h);
-        return dest;
+    // Join
+    // Returns: join of this and other
+    inline Interval join (Interval other) {
+        if (this->is_bot())
+            return other;
+        if (other.is_bot())
+            return *this;
+        return Interval(MIN(l, other.l), MAX(h, other.h));
     }
 
-    Interval *meet (Interval other, Interval *dest) {
-        int low = MAX(l, other.l);
-        int high = MIN(h, other.h);
-        // Bot
-        if (low > high) {
-            low = INT_BOT.l;
-            high = INT_BOT.h;
-        }
-        *dest = Interval(low, high);
-        return dest;
+    // Meet
+    // Returns: meet of this and other
+    inline Interval meet (Interval other) {
+        return Interval(MAX(l, other.l), MIN(h, other.h));
+    }
+
+    // Checks if this is bot
+    inline bool is_bot() {
+        return l > h;
     }
 };
 

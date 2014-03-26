@@ -13,6 +13,7 @@ int main(void) {
                 i_top = INT_TOP,
                 tmp(0, 0);
     assert(i00 == tmp);
-    i12.join(i34, &tmp);
-    assert(tmp == i14);
+    assert(i12.join(i34) == i14);
+    assert(i12.join(i34) == i14);
+    assert(i12.meet(i34).is_bot());
 }
