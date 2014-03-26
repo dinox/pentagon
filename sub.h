@@ -17,23 +17,23 @@ struct Sub {
     map<int, set<int>*> *relations;
 
     // Constructor
-    sub() {
+    Sub() {
         relations = new map<int, set<int>*>();
     }
 
     // Destructor
-    ~sub() {
+    ~Sub() {
         map<int, set<int>*>::iterator it;
-        for (it = relations.begin(); it != relations.end(); it++)
+        for (it = relations->begin(); it != relations->end(); it++)
             delete it->second;
         delete relations;
     }
 
     // Adds x < y to the map
     void less_than(int x, int y) {
-        if (!relations->at(x))
-            relations->at(x) = new set<int>();
-        relations.at(x)->insert(y);
+        if (!relations->count(x))
+            relations->insert(pair<int, set<int>*>(x, new set<int>()));
+        relations->at(x)->insert(y);
     }
 
     // Returns true if x < y
