@@ -1,13 +1,13 @@
-#include "sub.h"
+#include "sub_domain.h"
 #include<assert.h>
 #include<iostream>
 
 int main() {
-    Sub s;
-    s.less_than(1,2);
-    assert(s.is_less_than(1,2));
-    s.less_than(2,3);
-    assert(!s.is_less_than(1,3));
-    s.not_less_than(1,2);
-    assert(!s.is_less_than(1,2));
+    SubDomain s;
+    s.lessThan(1,2);
+    assert(s.isLessThan(1,2));
+    s.lessThan(2,3);
+    assert(!s.isLessThan(1,3));
+    s.notLessThan(1,2);
+    assert(!s.isLessThan(1,2));
 }

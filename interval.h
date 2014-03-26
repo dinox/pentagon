@@ -19,6 +19,10 @@
  */
 class Interval {
 public:
+    Interval() {
+        *this = INT_TOP;
+    }
+
     // Constructor
     Interval(int low, int high) {
         l_ = low;
