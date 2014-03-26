@@ -17,18 +17,17 @@
  *  Bot is represented by all [a, b] such that a > b
  *  All others is straightforward [l, h]
  */
-struct Interval {
-    int l, h;
-
+class Interval {
+public:
     // Constructor
     Interval(int low, int high) {
-        l = low;
-        h = high;
+        l_ = low;
+        h_ = high;
     }
 
     // Overload equals
     inline bool operator== (const Interval &other) const {
-        return l == other.l && h == other.h;
+        return l_ == other.l_ && h_ == other.h_;
     }
 
     // Join
@@ -38,19 +37,21 @@ struct Interval {
             return other;
         if (other.is_bot())
             return *this;
-        return Interval(MIN(l, other.l), MAX(h, other.h));
+        return Interval(MIN(l_, other.l_), MAX(h_, other.h_));
     }
 
     // Meet
     // Returns: meet of this and other
     inline Interval meet (Interval other) {
-        return Interval(MAX(l, other.l), MIN(h, other.h));
+        return Interval(MAX(l_, other.l_), MIN(h_, other.h_));
     }
 
     // Checks if this is bot
     inline bool is_bot() {
-        return l > h;
+        return l_ > h_;
     }
+private:
+    int l_, h_;
 };
 
 #endif // INTERVAL

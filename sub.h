@@ -13,38 +13,41 @@ using namespace std;
  * TODO: Maybe also store y > x so we can get that in
  *       an efficient way.
  */
-struct Sub {
-    map<int, set<int>*> *relations;
+class Sub {
+public:
+    typedef RelationsMap map<int, set<int>*>
 
     // Constructor
     Sub() {
-        relations = new map<int, set<int>*>();
+        relations_ = new RelationsMap();
     }
 
     // Destructor
     ~Sub() {
-        map<int, set<int>*>::iterator it;
-        for (it = relations->begin(); it != relations->end(); it++)
+        RelationsMap:iterator it;
+        for (it = relations_->begin(); it != relations_->end(); it++)
             delete it->second;
-        delete relations;
+        delete relations_;
     }
 
     // Adds x < y to the map
     void less_than(int x, int y) {
-        if (!relations->count(x))
-            relations->insert(pair<int, set<int>*>(x, new set<int>()));
-        relations->at(x)->insert(y);
+        if (!relations_->count(x))
+            relations_->insert(pair<int, set<int>*>(x, new set<int>()));
+        relations_->at(x)->insert(y);
     }
 
     // Returns true if x < y
     bool is_less_than(int x, int y) {
-        return relations->at(x)->count(y);
+        return relations_->at(x)->count(y);
     }
 
     // Removes x < y from the map
     void not_less_than(int x, int y) {
-        relations->at(x) && relations->at(x)->erase(y);
+        relations_->at(x) && relations_->at(x)->erase(y);
     }
+private:
+    map<int, set<int>*> *relations_;
 };
 
 #endif // SUB
