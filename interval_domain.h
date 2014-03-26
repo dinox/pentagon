@@ -2,13 +2,18 @@
 #define INTERVAL_DOMAIN
 
 #include "interval.h"
+#include "sub_domain.h"
 
 class IntervalDomain {
 public:
     typedef map<int, Interval> IntervalMap;
 
-    IntervalDomain () {
-    }
+    // I use references here because we dont want to copy whole interval domain
+    //TODO: Implement
+    void join(IntervalDomain *other, IntervalDomain *dest);
+
+    //TODO: Implement
+    void closure(SubDomain sub);
 
     Interval getForVar(int var) {
         return var_map_[var];

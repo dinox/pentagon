@@ -19,16 +19,18 @@ public:
     typedef set<int> VariableSet;
     typedef pair<int, VariableSet> VariableSetPair;
 
-    // Constructor
-    SubDomain() {
-    }
-
     // Destructor
     ~SubDomain() {
         //RelationsMap::iterator it;
         //for (it = relations_.begin(); it != relations_.end(); it++)
         //    delete it->second;
     }
+
+    //TODO: Implement
+    void infer_from_interval(Interval i);
+
+    //TODO: Implement
+    void closure(SubDomain *other, SubDomain *dest);
 
     // Adds x < y to the map
     void lessThan(int x, int y) {

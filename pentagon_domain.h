@@ -6,14 +6,6 @@ class Pentagon {
 public:
     typedef pair<int, Interval> IntervalPair;
 
-    // Constructor
-    Pentagon() {
-    }
-
-    // Destructor
-    ~Pentagon() {
-    }
-
     //TODO: Think about this. Then implement
     void closure() {
         // Close interval domain by using sub domain
