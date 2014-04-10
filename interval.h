@@ -36,7 +36,7 @@ public:
 
     // Join
     // Returns: join of this and other
-    inline Interval join (Interval other) {
+    inline Interval join (Interval& other) {
         if (this->is_bot())
             return other;
         if (other.is_bot())
@@ -54,6 +54,25 @@ public:
     inline bool is_bot() {
         return l_ > h_;
     }
+    
+    inline int getLow() {
+        return l_;
+    }
+    
+    inline int getHigh() {
+        return h_;
+    }
+    
+    inline void assumeLessThan(const Interval& other) {
+        h_ = MIN(h_, other.h_ - 1);
+    }
+    
+    inline bool lessThan(const Interval& other) {
+        if (is_bot() || other.is_bot())
+            return false;
+        return h_ < other.l_;
+    }
+     
 private:
     int l_, h_;
 };

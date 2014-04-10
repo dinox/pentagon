@@ -9,18 +9,31 @@ public:
     typedef map<int, Interval> IntervalMap;
 
     // I use references here because we dont want to copy whole interval domain
-    //TODO: Implement
-    void join(IntervalDomain *other, IntervalDomain *dest);
+    void join(IntervalDomain& other) {
+        for (IntervalMap::iterator it = var_map_.begin(); it != var_map_.end(); ++it) {
+            it->second = it->second.join(other.getForVar(it->first));
+        }
+    }
 
-    //TODO: Implement
-    void closure(SubDomain sub);
+    void closure(const SubDomain& sub) {
+        for (IntervalMap::iterator it = var_map_.begin(); it != var_map_.end(); ++it) {
+            set<int>& ss = sub.getVarSet(it->first);
+            
+            for (SubDomain::VariableSet::iterator ii=ss.begin(); ii != ss.end(); ++ii)
+                ii->second.assumeLessThan(getForVar(*ii));
+        }
+    }
 
-    Interval getForVar(int var) {
+    inline Interval getForVar(int var) {
         return var_map_[var];
     }
 
     void setForVar(int var, Interval i) {
         var_map_[var] = i;
+    }
+    
+    IntervalMap& getIntervalMap() {
+        return var_map_;
     }
 
 

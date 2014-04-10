@@ -6,21 +6,19 @@ class Pentagon {
 public:
     typedef pair<int, Interval> IntervalPair;
 
-    //TODO: Think about this. Then implement
     void closure() {
-        // Close interval domain by using sub domain
-        // ...
-        // Infer new sub relations from interval domain
-        // ...
-        // Close sub domain transitivily
-        // ...
+        intervals_.closure(sub_);
+        sub_.inferFromInterval(intervals_);
+        sub_.closure();
     }
 
-    //TODO: Implement
-    Pentagon join(Pentagon *other) {
-        Pentagon ret;
-        return ret;
+    void join(const Pentagon& other) {
+        closure();
+        other.closure();
+        intervals_.join(other.intervals_);
+        sub_.join(other.sub_);
     }
+    
     void addIntervalFor(int var, Interval i) {
         intervals_.setForVar(var, i);
     }
