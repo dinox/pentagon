@@ -17,60 +17,92 @@
  *  Bot is represented by all [a, b] such that a > b
  *  All others is straightforward [l, h]
  */
-class Interval {
+class Interval 
+{
 public:
-    Interval() {
-        *this = INT_TOP;
+    Interval() 
+    {
+        *this = INT_BOT;
     }
 
     // Constructor
-    Interval(int low, int high) {
+    Interval(int low, int high) 
+    {
         l_ = low;
         h_ = high;
     }
 
     // Overload equals
-    inline bool operator== (const Interval &other) const {
+    inline bool operator== (const Interval &other) const 
+    {
         return l_ == other.l_ && h_ == other.h_;
     }
 
     // Join
-    // Returns: join of this and other
-    inline Interval join (Interval& other) {
-        if (this->is_bot())
-            return other;
-        if (other.is_bot())
-            return *this;
-        return Interval(MIN(l_, other.l_), MAX(h_, other.h_));
+    inline void join(const Interval& other) 
+    {
+        if (this->is_bot() || other.is_bot())
+            *this = INT_BOT;
+        else {
+            l_ = MIN(l_, other.l_);
+            h_ = MAX(h_, other.h_);
+        }
     }
 
     // Meet
-    // Returns: meet of this and other
-    inline Interval meet (Interval other) {
-        return Interval(MAX(l_, other.l_), MIN(h_, other.h_));
+    inline void meet(const Interval& other) 
+    {
+        l_ = MAX(l_, other.l_);
+        h_ = MIN(h_, other.h_);
     }
 
-    // Checks if this is bot
-    inline bool is_bot() {
+    inline bool is_bot() const 
+    {
         return l_ > h_;
     }
     
-    inline int getLow() {
-        return l_;
+    inline bool is_top() const 
+    {
+        return *this == INT_TOP;
     }
     
-    inline int getHigh() {
-        return h_;
-    }
-    
-    inline void assumeLessThan(const Interval& other) {
+    inline void assumeLessThan(const Interval& other)
+    {
         h_ = MIN(h_, other.h_ - 1);
+        // equivalent to
+        // meet(Interval(l_, other.h_-1));
     }
     
-    inline bool lessThan(const Interval& other) {
+    inline void assumeGreaterThan(const Interval& other)
+    {
+        l_ = MAX(l_, other.l_ + 1);
+        // equivalent to
+        // meet(Interval(other.l_+1, h_));
+    }
+    
+    inline bool lessThan(const Interval& other) const
+    {
         if (is_bot() || other.is_bot())
             return false;
         return h_ < other.l_;
+    }
+    
+    inline int getLow() const {
+        return l_;
+    }
+    
+    inline int getHigh() const {
+        return h_;
+    }
+    
+    inline void setLow(int l)
+    {
+        l_ = l;
+    }
+    
+    inline void setHigh(int h)
+    {
+        h_ = h;
     }
      
 private:

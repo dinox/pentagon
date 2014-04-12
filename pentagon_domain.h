@@ -6,18 +6,9 @@ class Pentagon {
 public:
     typedef pair<int, Interval> IntervalPair;
 
-    void closure() {
-        intervals_.closure(sub_);
-        sub_.inferFromInterval(intervals_);
-        sub_.closure();
-    }
+    void closure();
 
-    void join(const Pentagon& other) {
-        closure();
-        other.closure();
-        intervals_.join(other.intervals_);
-        sub_.join(other.sub_);
-    }
+    void join(Pentagon& other);
     
     void addIntervalFor(int var, Interval i) {
         intervals_.setForVar(var, i);

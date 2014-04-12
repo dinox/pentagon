@@ -1,42 +1,33 @@
 #ifndef INTERVAL_DOMAIN
 #define INTERVAL_DOMAIN
 
+#include <map>
 #include "interval.h"
-#include "sub_domain.h"
 
-class IntervalDomain {
+using namespace std;
+
+class SubDomain;
+
+class IntervalDomain 
+{
+    friend class SubDomain;
 public:
     typedef map<int, Interval> IntervalMap;
 
-    // I use references here because we dont want to copy whole interval domain
-    void join(IntervalDomain& other) {
-        for (IntervalMap::iterator it = var_map_.begin(); it != var_map_.end(); ++it) {
-            it->second = it->second.join(other.getForVar(it->first));
-        }
-    }
+    void join(IntervalDomain& other);
 
-    void closure(const SubDomain& sub) {
-        for (IntervalMap::iterator it = var_map_.begin(); it != var_map_.end(); ++it) {
-            set<int>& ss = sub.getVarSet(it->first);
-            
-            for (SubDomain::VariableSet::iterator ii=ss.begin(); ii != ss.end(); ++ii)
-                ii->second.assumeLessThan(getForVar(*ii));
-        }
-    }
+    void inferFromSub(SubDomain& sub);
 
-    inline Interval getForVar(int var) {
+    inline Interval getForVar(int var) 
+    {
         return var_map_[var];
     }
 
-    void setForVar(int var, Interval i) {
+    void setForVar(int var, Interval i) 
+    {
         var_map_[var] = i;
     }
     
-    IntervalMap& getIntervalMap() {
-        return var_map_;
-    }
-
-
 private:
     IntervalMap var_map_;
 };
