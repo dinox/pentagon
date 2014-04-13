@@ -1,5 +1,4 @@
-#include "interval_domain.h"
-#include "sub_domain.h"
+#include "pentagon.h"
 #include <cassert>
 
 using namespace std;
