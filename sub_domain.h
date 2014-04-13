@@ -6,8 +6,6 @@
 
 using namespace std;
 
-class IntervalDomain;
-
 /*
  * SUB class
  * All variables are indexed by an int
@@ -16,7 +14,6 @@ class IntervalDomain;
  *       an efficient way.
  */
 class SubDomain {
-    friend class IntervalDomain;
 public:
     typedef map<int, set<int> > RelationsMap;
     typedef set<int> VariableSet;
@@ -26,7 +23,7 @@ public:
     // I don't think that we need a destructor here
 
     void inferFromInterval(IntervalDomain& i);
-    
+
     void closure();
 
     void join(SubDomain& other);
@@ -51,14 +48,39 @@ public:
         if (relations_.count(x))
             relations_.at(x).erase(y);
     }
-    
+
     VariableSet& getVarSet(int var)
     {
         return relations_[var];
     }
-    
-private:
+
     RelationsMap relations_;
 };
+
+void SubDomain::join(SubDomain& other)
+{
+    for (RelationsMap::iterator it = relations_.begin(); it != relations_.end(); ++it)
+    {
+        VariableSet& o = other.getVarSet(it->first);
+        it->second.insert(o.begin(), o.end());
+    }
+
+    for (RelationsMap::iterator it = other.relations_.begin(); it != other.relations_.end(); ++it)
+    {
+        VariableSet& o = getVarSet(it->first);
+        o.insert(it->second.begin(), it->second.end());
+    }
+}
+
+void SubDomain::closure()
+{
+    for (RelationsMap::iterator it = relations_.begin(); it != relations_.end(); ++it)
+        for (VariableSet::iterator i = it->second.begin(); i != it->second.end(); ++i)
+        {
+            VariableSet& ss = getVarSet(*i);
+            for (VariableSet::iterator j = ss.begin(); j != ss.end(); ++j)
+                lessThan(it->first, *j);
+        }
+}
 
 #endif // SUB_DOMAIN
