@@ -1,4 +1,5 @@
 #include "pentagon_domain.h"
+#include "pentagon_dense.h"
 #include <cassert>
 
 using namespace std;
@@ -9,8 +10,6 @@ void test_interval()
                 i12(1, 2),
                 i34(3, 4),
                 i14(1, 4),
-                i_bot = INT_BOT,
-                i_top = INT_TOP,
                 tmp(0, 0);
     assert(i00 == tmp);
     Interval x = i12;
@@ -85,10 +84,35 @@ void test_sub_domain()
     assert(pentagon.sub_.isLessThan(7,12));
 }
 
+void test_pentagon_dense() {
+    IntervalDomain ii;
+    ii.setForVar(3, Interval(2, 4));
+    ii.setForVar(5, Interval(8, 9));
+
+    PentagonDM pentagon(ii, 13);
+
+    pentagon.addSubFor(1,3);
+    pentagon.addSubFor(5,10);
+    pentagon.addSubFor(7,12);
+
+
+    pentagon.inferSubFromInterval(); //should infer 3 < 5
+    assert(pentagon.getSubFor(3,5));
+    pentagon.subClosure(); // should close the chain 1->3->5->10
+
+    assert(pentagon.getSubFor(1,3));
+    assert(pentagon.getSubFor(1,5));
+    assert(pentagon.getSubFor(1,10));
+    assert(pentagon.getSubFor(3,5));
+    assert(pentagon.getSubFor(3,10));
+    assert(pentagon.getSubFor(7,12));
+}
+
 int main()
 {
     test_interval();
     test_interval_domain();
     test_sub_domain();
+    test_pentagon_dense();
     return 0;
 }
