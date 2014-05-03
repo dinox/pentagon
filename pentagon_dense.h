@@ -8,8 +8,10 @@ class PentagonDM {
 public:
     typedef pair<int, Interval> IntervalPair;
 
+    PentagonDM();
     PentagonDM(IntervalDomain, int);
 
+    void allocate(int num_of_vars);
     void closure();
     void inferSubFromInterval();
     void inferIntervalFromSub();
@@ -35,8 +37,15 @@ public:
     int num_of_vars_;
 };
 
+PentagonDM::PentagonDM() {
+}
+
 PentagonDM::PentagonDM(IntervalDomain i, int num_of_vars) {
     intervals_ = i;
+    allocate(num_of_vars);
+}
+
+void PentagonDM::allocate(int num_of_vars) {
     sub_ = new int[num_of_vars * num_of_vars];
     for (int i = 0; i < num_of_vars * num_of_vars; i++) {
         sub_[i] = 0;

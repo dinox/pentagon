@@ -23,6 +23,10 @@ public:
     void print_cycles() {
         printf("Elapsed cycles: %.2lld cycles\n", stop_-start_);
     }
+    
+    unsigned long long get_cycles() {
+        return stop_-start_;
+    }
 
 private:
     static inline unsigned long long rdtsc() {

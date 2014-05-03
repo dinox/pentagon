@@ -6,6 +6,7 @@ class Pentagon {
 public:
     typedef pair<int, Interval> IntervalPair;
 
+    Pentagon();
     Pentagon(IntervalDomain, SubDomain);
 
     void closure();
@@ -24,6 +25,9 @@ public:
     IntervalDomain intervals_;
     SubDomain sub_;
 };
+
+Pentagon::Pentagon() {
+}
 
 Pentagon::Pentagon(IntervalDomain i, SubDomain s) {
     intervals_ = i;
