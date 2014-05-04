@@ -22,7 +22,8 @@ class Interval
 public:
     Interval() 
     {
-        *this = INT_BOT;
+        l_ = 1;
+        h_ = 0;
     }
 
     // Constructor
@@ -35,18 +36,23 @@ public:
     // Overload equals
     inline bool operator== (const Interval &other) const 
     {
-        return l_ == other.l_ && h_ == other.h_;
+    	if (l_ == other.l_ && h_ == other.h_)
+    		return true;
+    	if (this->is_bot() && other.is_bot())
+    		return true;
+    	return false;
     }
 
     // Join
     inline void join(const Interval& other) 
     {
-        if (this->is_bot() || other.is_bot())
-            *this = INT_BOT;
-        else {
-            l_ = MIN(l_, other.l_);
-            h_ = MAX(h_, other.h_);
-        }
+    	if (is_bot()) {
+    		l_ = other.l_;
+    		h_ = other.h_;
+    	} else if (!other.is_bot()) {
+    		l_ = MIN(l_, other.l_);
+			h_ = MAX(h_, other.h_);
+    	}
     }
 
     // Meet
@@ -87,25 +93,6 @@ public:
         return h_ < other.l_;
     }
     
-    inline int getLow() const {
-        return l_;
-    }
-    
-    inline int getHigh() const {
-        return h_;
-    }
-    
-    inline void setLow(int l)
-    {
-        l_ = l;
-    }
-    
-    inline void setHigh(int h)
-    {
-        h_ = h;
-    }
-     
-private:
     int l_, h_;
 };
 
