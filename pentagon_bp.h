@@ -71,12 +71,12 @@ void FWI(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
     int k, i, j, i1, j1;
     for (k = 0; k < n; k++) {
         for (i = 0; i < n; i += UI) {
-            for (j = 0; j < n; j += SUB_BITS*UJ) {
+            for (j = 0; j < n / SUB_BITS; j += UJ) {
                 for (i1 = i; i1 < i+UI; i1++) {
-                    for (j1 = j; j1 < j+SUB_BITS*UJ; j1++) {
-                         c[i1 * cols + (j1 / SUB_BITS)] |=
+                    for (j1 = j; j1 < j+UJ; j1++) {
+                         c[i1 * cols + j1] |=
                              a[i1 * cols + k] &
-                             b[k * cols + (j1 / SUB_BITS)];
+                             b[k * cols + j1];
                     }
                 }
             }
