@@ -1,9 +1,9 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define UK (2)
-#define UI (2)
-#define UJ (2)
+#define UK (4)
+#define UI (4)
+#define UJ (4)
 
 void FWI(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
     int k, i, j, i1, j1;
@@ -22,10 +22,10 @@ void FWI(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
 
 void FWIabc(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
     int k, i, j, i1, j1, k1;
-    for (j = 0; j < n; j += UJ) {
-        for (i = 0; i < n; i += UI) {
+    for (i = 0; i < n; i += UI) {
+    	for (j = 0; j < n; j += UJ) {
             for (k = 0; k < n; k += UK) {
-                for (k1 = k; k1 < k+UI; k1++) {
+                for (k1 = k; k1 < k+UK; k1++) {
                     for (i1 = i; i1 < i+UI; i1++) {
                         for (j1 = j; j1 < j+UJ; j1++) {
                             c[i1*cols + j1] = c[i1*cols + j1] || (a[i1*cols + k1] && b[k1*cols + j1]);

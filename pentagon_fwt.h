@@ -78,7 +78,8 @@ std::set<int> PentagonFWT::getSubFor(int var)
 void PentagonFWT::subClosure()
 {
     // Delegate to FWT(...)
-    FWT(sub_, sub_, sub_, num_of_vars_, 16);
+    //FWI(sub_, sub_, sub_, num_of_vars_, num_of_vars_);
+	FWT(sub_, sub_, sub_, num_of_vars_, 8);
 }
 
 // Requires the domains to have same number of vars

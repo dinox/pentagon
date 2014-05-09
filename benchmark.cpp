@@ -278,8 +278,8 @@ void Benchmark::BenchAll()
 {
 	PentagonDM* pentDM = benchDM();
 	printf("-------------------------\n");
-	benchSTL(pentDM);
-	printf("-------------------------\n");
+	//benchSTL(pentDM);
+	//printf("-------------------------\n");
 	benchFWT(pentDM);
 	printf("-------------------------\n");
 }
