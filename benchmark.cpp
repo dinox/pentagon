@@ -4,9 +4,11 @@
 #include "pentagon_stl.h"
 #include "pentagon_dense.h"
 
+
 #include <cstdio>
 #include <cstdlib>
 #include <ctime>
+#include <cstring>
 
 int rand_between(int x, int y) // [x,y)
 {
@@ -79,7 +81,7 @@ void Benchmark::loadFromFile(const char* path)
 	FILE* f = fopen(path, "r");
 	if (f == NULL) {
 		printf("Got an error while reading the file %s!", path);
-		return;
+		exit(1);
 	}
 	fscanf(f, "%d %d\n", &nVars, &nDoms);
 	intervals.resize(nDoms);
@@ -223,12 +225,41 @@ void Benchmark::benchSTL(PentagonDM* orig)
 
 }
 
-int main()
+void print_usage()
 {
+	printf("Usage:\n");
+	printf("benchmark rand <Vars> <Doms> <Joins>\n");
+	printf("benchmark genfile <filename> <Vars> <Doms> <Joins>\n");
+	printf("benchmark benchfile <filename>\n");
+	exit(1);
+}
+
+void Benchmark::BenchAll()
+{
+	PentagonDM* pentDM = benchDM();
+	benchSTL(pentDM);
+}
+
+int main(int argc, char** argv)
+{
+	int nDoms, nVars, nJoins;
 	Benchmark b;
-	b.generate(10, 3, 4);
-	//b.loadFromFile("test");
-	PentagonDM* pentDM = b.benchDM();
-	b.benchSTL(pentDM);
+
+	if (argc < 3)
+		print_usage();
+	else {
+		if (strcmp(argv[1], "rand") == 0 && argc == 5) {
+			b.generate(atoi(argv[2]), atoi(argv[3]), atoi(argv[4]));
+			b.BenchAll();
+		} else if (strcmp(argv[1], "genfile") == 0 && argc == 6) {
+			b.generate(atoi(argv[3]), atoi(argv[4]), atoi(argv[5]));
+			b.saveToFile(argv[2]);
+		} else if (strcmp(argv[1], "benchfile") == 0 && argc == 3) {
+			b.loadFromFile(argv[2]);
+			b.BenchAll();
+		} else {
+			print_usage();
+		}
+	}
 	return 0;
 }

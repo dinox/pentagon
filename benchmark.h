@@ -11,6 +11,7 @@ public:
 	int nVars, nDoms, nJoins;
 	void generate(int nVars, int nDoms, int nJoins);
 
+	void BenchAll();
 	PentagonDM* benchDM();
 	void benchSTL(PentagonDM* base);
 	// bench whatever
