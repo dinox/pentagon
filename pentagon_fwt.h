@@ -3,13 +3,14 @@
 
 #include "interval.h"
 #include "pentagon.h"
-#include "pentagon_dense.h"
 #include <cassert>
 
 #define UI (1)
 #define UJ (1)
 
-class PentagonFWT : public PentagonDM {
+#define L1_SIZE (1)
+
+class PentagonFWT : public Pentagon {
 public:
     void allocate(int nVars);
     void join(PentagonFWT& other);
@@ -35,18 +36,22 @@ public:
 	}
 
 	std::set<int> getSubFor(int var);
-private:
+
+    bool getSubFor(int x, int y) {
+        return !!sub_[x * num_of_vars_ + y];
+    }
+//private:
     void closure();
     void inferSubFromInterval();
     void inferIntervalFromSub();
 
-    void subJoin(int*);
+    void subJoin(uint8_t*);
     void intervalJoin(Interval* in);
     void subClosure();
 	void subLameClosure();
 
     Interval* intervals_;
-    int* sub_;
+    uint8_t* sub_;
     int num_of_vars_;
 };
 
@@ -54,7 +59,7 @@ private:
 
 void PentagonFWT::allocate(int num_of_vars)
 {
-    sub_ = new int[num_of_vars * num_of_vars];
+    sub_ = new uint8_t[num_of_vars * num_of_vars];
     for (int i = 0; i < num_of_vars * num_of_vars; i++) {
         sub_[i] = 0;
     }
@@ -75,18 +80,18 @@ std::set<int> PentagonFWT::getSubFor(int var)
 
 void PentagonFWT::subClosure()
 {
-	// Floyd-Warshall
-	int i,j,k;
+    // Delegate to FWT(...)
+    FWI(sub_, sub_, sub_, num_of_vars_, num_of_vars_);
+    int i,j,k;
 	for (k = 0; k < num_of_vars_; ++k)
 		for (i = 0; i < num_of_vars_; ++i)
-			if (sub_[i * num_of_vars_ + k])
-				for (j = 0; j < num_of_vars_; ++j)
-					if (sub_[k * num_of_vars_ + j])
-						sub_[i * num_of_vars_ + j] = 1;
+			for (j = 0; j < num_of_vars_; ++j) {
+                sub_[i*num_of_vars_ + j] = sub_[i*num_of_vars_ + j] || (sub_[i*num_of_vars_ + k] && sub_[k*num_of_vars_ + j]);
+            }
 }
 
 // Requires the domains to have same number of vars
-void PentagonFWT::subJoin(int* other)
+void PentagonFWT::subJoin(uint8_t* other)
 {
     for (int i = 0; i < num_of_vars_ * num_of_vars_; i++) {
         sub_[i] &= other[i];

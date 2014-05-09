@@ -20,7 +20,7 @@ void FWI(uint8_t* A, uint8_t* B, uint8_t* C, int N, int cols) {
             for (j = 0; j < N; j += UJ) {
                 for (i1 = i; i1 < i+UI-1; i1++) {
                     for (j1 = j; j1 < j+UJ-1; j1++) {
-                        C[i1*cols + j1] = A[i1*cols + k] && B[k*cols + j1];
+                        C[i1*cols + j1] = C[i1*cols + j1] || (A[i1*cols + k] && B[k*cols + j1]);
                     }
                 }
             }
@@ -36,7 +36,7 @@ void FWIabc(uint8_t* A, uint8_t* B, uint8_t* C, int N, int cols) {
                 for (k1 = k; k1 < k+UI-1; k1++) {
                     for (i1 = i; i1 < i+UI-1; i1++) {
                         for (j1 = j; j1 < j+UJ-1; j1++) {
-                            C[i1*cols + j1] = A[i1*cols + k1] && B[k1*cols + j1];
+                            C[i1*cols + j1] = C[i1*cols + j1] || (A[i1*cols + k1] && B[k1*cols + j1]);
                         }
                     }
                 }
