@@ -5,6 +5,7 @@
 #include "pentagon.h"
 #include "macros.h"
 #include <cassert>
+#include <stdint.h>
 
 class PentagonFWT : public Pentagon {
 public:

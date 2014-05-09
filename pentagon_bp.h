@@ -7,6 +7,7 @@
 #include "macros.h"
 #include <cassert>
 #include <inttypes.h>
+#include <stdint.h>
 
 class PentagonBP : public PentagonFWT {
 public:
