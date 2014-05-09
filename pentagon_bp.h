@@ -25,11 +25,11 @@ public:
 	}
 
 	void setSubFor(int x, int y) {
-		sub_[x * num_of_vars_ + (y / SUB_BITS)] |= 1 << (y % SUB_BITS);
+		sub_[x * cols_ + (y / SUB_BITS)] |= 1 << (y % SUB_BITS);
 	}
 
     bool getSubFor(int x, int y) {
-        return sub_[(x * num_of_vars_ + (y / SUB_BITS))] & (1 << (y % SUB_BITS));
+        return !!(sub_[(x * cols_ + (y / SUB_BITS))] & (1 << (y % SUB_BITS)));
     }
 
 	Interval getIntervalFor(int var)
@@ -62,6 +62,7 @@ public:
     Interval* intervals_;
     SUB_TYPE* sub_;
     int num_of_vars_;
+    int cols_;
 };
 
 int round2pow(int v) {
@@ -70,6 +71,8 @@ int round2pow(int v) {
     v |= v >> 1;
     v |= v >> 2;
     v |= v >> 4;
+    v |= v >> 8;
+    v |= v >> 16;
     v++;
     return v;
 }
@@ -80,14 +83,15 @@ void PentagonBP::FWI(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
         for (i = 0; i < n; i += UI) {
             for (j = 0; j < n / SUB_BITS; j += UJ) {
                 for (i1 = i; i1 < i+UI; i1++) {
+                    SUB_TYPE mask = - !!(a[(i1 * cols + (k / SUB_BITS))] & (1 << (k % SUB_BITS)));
                     for (j1 = j; j1 < j+UJ; j1++) {
-                         c[i1 * cols + j1] |=
-                             a[i1 * cols + k] &
-                             b[k * cols + j1];
+                        printf("0x%x ", mask & b[k * cols + j1]);
+                         c[i1 * cols + j1] |= mask & b[k * cols + j1];
                     }
                 }
             }
         }
+        printf("\n");
     }
 }
 
@@ -148,12 +152,12 @@ void PentagonBP::FWT(uint8_t* a, uint8_t* b, uint8_t* c, int n, int L1) {
 
 void PentagonBP::allocate(int num_of_vars)
 {
-    num_of_vars = round2pow(num_of_vars);
+    //num_of_vars = round2pow(num_of_vars);
     sub_ = new SUB_TYPE[num_of_vars * num_of_vars / SUB_BITS];
     for (int i = 0; i < num_of_vars * num_of_vars / SUB_BITS; i++) {
         sub_[i] = 0;
     }
-
+    cols_ = num_of_vars_ / SUB_BITS;
     intervals_ = new Interval[num_of_vars];
 
     num_of_vars_ = num_of_vars;
@@ -162,7 +166,7 @@ void PentagonBP::allocate(int num_of_vars)
 void PentagonBP::subClosure()
 {
     // Delegate to FWT(...)
-    FWI(sub_, sub_, sub_, num_of_vars_, num_of_vars_);
+    FWI(sub_, sub_, sub_, num_of_vars_, cols_);
 }
 
 // Requires the domains to have same number of vars

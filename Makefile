@@ -16,8 +16,8 @@ all: benchmark
 benchmark: benchmark.cpp $(HEADERS)
 	$(CC) -o benchmark benchmark.cpp
 
-run:
-	./benchmark rand 16 5 4
+run: all
+	./benchmark rand 16 2 1
 
 erik:
 	c++ -o test.o -c test.cpp

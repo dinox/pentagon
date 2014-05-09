@@ -2,7 +2,7 @@
 #define __PENTAGON_MACROS__
 
 
-#define L1_SIZE (32)
+#define L1_SIZE (8)
 #define UK (1)
 #define UI (1)
 #define UJ (1)
