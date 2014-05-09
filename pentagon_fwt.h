@@ -4,7 +4,6 @@
 #include "interval.h"
 #include "pentagon.h"
 #include "macros.h"
-#include "fwt_kernels.h"
 #include <cassert>
 
 class PentagonFWT : public Pentagon {

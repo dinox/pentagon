@@ -164,4 +164,60 @@ void PentagonBP::subClosure()
     FWI(sub_, sub_, sub_, num_of_vars_, num_of_vars_);
 }
 
+// Requires the domains to have same number of vars
+void PentagonBP::subJoin(SUB_TYPE* other)
+{
+    for (int i = 0; i < num_of_vars_ * num_of_vars_ / SUB_BITS; i++) {
+        sub_[i] &= other[i];
+    }
+}
+
+void PentagonBP::intervalJoin(Interval* in)
+{
+	for (int i = 0; i < num_of_vars_; i++)
+		intervals_[i].join(in[i]);
+}
+
+// Maybe merge these into closure
+void PentagonBP::inferIntervalFromSub()
+{
+	int i,j;
+	for (i=0; i<num_of_vars_; ++i)
+		for (j=0; j<num_of_vars_; ++j)
+			if (getSubFor(i,j)) {
+				intervals_[i].assumeLessThan(intervals_[j]); // <
+				intervals_[j].assumeGreaterThan(intervals_[i]); // >
+			}
+}
+
+void PentagonBP::inferSubFromInterval()
+{
+    int i,j;
+	for (i=0; i<num_of_vars_; ++i)
+		for (j=0; j<num_of_vars_; ++j)
+			if (intervals_[i].lessThan(intervals_[j]))
+				setSubFor(i, j);
+}
+
+// Pentagon domain
+void PentagonBP::closure()
+{
+    inferIntervalFromSub();
+    inferSubFromInterval();
+    subClosure();
+}
+
+void PentagonBP::join(PentagonBP& other) 
+{
+	assert(&other != this);
+	assert(other.num_of_vars_ == num_of_vars_);
+    // first apply closure
+    closure();
+    other.closure();
+    // then delegate join
+    intervalJoin(other.intervals_);
+    subJoin(other.sub_);
+}
+
+
 #endif // __PENTAGON_BP__
