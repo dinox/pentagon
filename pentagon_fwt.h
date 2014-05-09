@@ -3,6 +3,7 @@
 
 #include "interval.h"
 #include "pentagon.h"
+#include "fwt_kernels.h"
 #include <cassert>
 
 #define UI (1)
@@ -55,7 +56,6 @@ public:
     int num_of_vars_;
 };
 
-#include "fwt_kernels.h"
 
 void PentagonFWT::allocate(int num_of_vars)
 {
@@ -81,13 +81,7 @@ std::set<int> PentagonFWT::getSubFor(int var)
 void PentagonFWT::subClosure()
 {
     // Delegate to FWT(...)
-    FWI(sub_, sub_, sub_, num_of_vars_, num_of_vars_);
-    int i,j,k;
-	for (k = 0; k < num_of_vars_; ++k)
-		for (i = 0; i < num_of_vars_; ++i)
-			for (j = 0; j < num_of_vars_; ++j) {
-                sub_[i*num_of_vars_ + j] = sub_[i*num_of_vars_ + j] || (sub_[i*num_of_vars_ + k] && sub_[k*num_of_vars_ + j]);
-            }
+    FWT(sub_, sub_, sub_, num_of_vars_, 16);
 }
 
 // Requires the domains to have same number of vars
