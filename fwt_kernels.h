@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdio.h>
 
 // These are just so my syntax checker shuts up
 #ifndef UK
@@ -20,6 +21,7 @@ void FWI(uint8_t* A, uint8_t* B, uint8_t* C, int N, int cols) {
             for (j = 0; j < N; j += UJ) {
                 for (i1 = i; i1 < i+UI-1; i1++) {
                     for (j1 = j; j1 < j+UJ-1; j1++) {
+                        printf("(k i j) = (%d %d %d)\n", k, i, j);
                         C[i1*cols + j1] = C[i1*cols + j1] || (A[i1*cols + k] && B[k*cols + j1]);
                     }
                 }

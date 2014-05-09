@@ -1,7 +1,7 @@
 CC = g++
 CPPFLAGS=-I. -fno-tree-vectorize
 HEADERS=interval.h pentagon_dense.h pentagon.h pentagon_stl.h timer.h
-SOURCES=benchmark.cpp
+SOURCES=benchmark
 #test_impl.cpp test_timer.cpp
 DEBUG ?= 0
 
@@ -11,10 +11,19 @@ else
 	CPPFLAGS += -g3 -DDEBUG
 endif
 
-all: $(SOURCES:.cpp=.bin)
+all: benchmark run
 
-%.bin: %.cpp $(HEADERS)
-	$(CC) -o $@ $< $(CPPFLAGS)
+benchmark:
+	$(CC) -o benchmark.o -c benchmark.cpp
+	$(CC) -o benchmark -c benchmark.o
+
+run:
+	./benchmark
+
+erik:
+	c++ -o test.o -c test.cpp
+	c++ -o test test.o
+	./test
 
 clean:
 	rm -r *.bin
