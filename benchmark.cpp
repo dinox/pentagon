@@ -3,7 +3,7 @@
 
 #include "pentagon_stl.h"
 #include "pentagon_dense.h"
-
+#include "pentagon_fwt.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -31,24 +31,24 @@ bool verify(Pentagon& a, Pentagon& b)
 	int nVars = a.getNumOfVars();
 
 	for (int i=0;i<nVars;++i) {
-		Interval x,y;
-		x = a.getIntervalFor(i);
-		y = b.getIntervalFor(i);
-		if (!(x == y)) {
-			printf("Different INTERVALs for var %d.\n", i);
-			printf("STL: [%d,%d]\n", x.l_, x.h_);
-			printf("DM: [%d,%d]\n", y.l_, y.h_);
+		if (!(a.getSubFor(i) == b.getSubFor(i))) {
+			printf("Different SUB sets for var %d.\n", i);
+			printf("Current: ");
+			printSet(a.getSubFor(i));
+			printf("DM: ");
+			printSet(b.getSubFor(i));
 			return false;
 		}
 	}
 
 	for (int i=0;i<nVars;++i) {
-		if (!(a.getSubFor(i) == b.getSubFor(i))) {
-			printf("Different SUB sets for var %d.\n", i);
-			printf("STL: ");
-			printSet(a.getSubFor(i));
-			printf("DM: ");
-			printSet(b.getSubFor(i));
+		Interval x,y;
+		x = a.getIntervalFor(i);
+		y = b.getIntervalFor(i);
+		if (!(x == y)) {
+			printf("Different INTERVALs for var %d.\n", i);
+			printf("Current: [%d,%d]\n", x.l_, x.h_);
+			printf("DM: [%d,%d]\n", y.l_, y.h_);
 			return false;
 		}
 	}
@@ -225,6 +225,46 @@ void Benchmark::benchSTL(PentagonDM* orig)
 
 }
 
+void Benchmark::benchFWT(PentagonDM* orig)
+{
+	int i,j;
+	PentagonFWT* pent = new PentagonFWT[nDoms];
+	for (i=0;i<nDoms;++i)
+		pent[i].allocate(nVars);
+
+	for (i=0;i<nDoms;++i) {
+		for (j=0;j<nVars;++j)
+			pent[i].setIntervalFor(j, Interval(intervals[i][j].first, intervals[i][j].second));
+		for (j=0;j<relations[i].size();++j)
+			pent[i].setSubFor(relations[i][j].first, relations[i][j].second);
+	}
+
+	Timer t(1);
+	t.start();
+
+	for (i=0;i<nJoins;++i)
+		pent[joins[i].first].join(pent[joins[i].second]);
+
+	t.stop();
+	printf("PentagonFWT domain perf:\n");
+	t.print_cycles();
+
+	if (orig) { // verify
+		bool verified = true;
+
+		for (int i=0;i<nDoms;++i)
+			if (!verify(pent[i], orig[i])) {
+				printf("FWT Verification failed for domain %d\n", i);
+				verified = false;
+				break;
+			}
+
+		if (verified)
+			printf("Verification completed!\n");
+	}
+
+}
+
 void print_usage()
 {
 	printf("Usage:\n");
@@ -237,7 +277,11 @@ void print_usage()
 void Benchmark::BenchAll()
 {
 	PentagonDM* pentDM = benchDM();
+	printf("-------------------------\n");
 	benchSTL(pentDM);
+	printf("-------------------------\n");
+	benchFWT(pentDM);
+	printf("-------------------------\n");
 }
 
 int main(int argc, char** argv)
