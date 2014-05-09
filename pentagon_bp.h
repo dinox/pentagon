@@ -25,11 +25,12 @@ public:
 	}
 
 	void setSubFor(int x, int y) {
-		sub_[x * cols_ + (y / SUB_BITS)] |= 1 << (y % SUB_BITS);
+
+		sub_[x * (num_of_vars_ / SUB_BITS) + (y / SUB_BITS)] |= (1 << (y % SUB_BITS));
 	}
 
     bool getSubFor(int x, int y) {
-        return !!(sub_[(x * cols_ + (y / SUB_BITS))] & (1 << (y % SUB_BITS)));
+        return ((sub_[(x * (num_of_vars_ / SUB_BITS) + (y / SUB_BITS))] >> (y % SUB_BITS)) & 1);
     }
 
 	Interval getIntervalFor(int var)
@@ -78,21 +79,36 @@ int round2pow(int v) {
 }
 
 void PentagonBP::FWI(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
-    int k, i, j, i1, j1;
+    /*int k, i, j, i1, j1;
     for (k = 0; k < n; k++) {
         for (i = 0; i < n; i += UI) {
             for (j = 0; j < n / SUB_BITS; j += UJ) {
                 for (i1 = i; i1 < i+UI; i1++) {
                     SUB_TYPE mask = - !!(a[(i1 * cols + (k / SUB_BITS))] & (1 << (k % SUB_BITS)));
                     for (j1 = j; j1 < j+UJ; j1++) {
+
                         printf("0x%x ", mask & b[k * cols + j1]);
                          c[i1 * cols + j1] |= mask & b[k * cols + j1];
+
+                         c[i1 * (cols/SUB_BITS) + j1] |=
+                        		 ((a[i1 * (cols/SUB_BITS) + (k/SUB_BITS)] >> (k%SUB_BITS))&1)
+                        		   & b[k * (cols/SUB_BITS) + j1];
                     }
                 }
             }
         }
-        printf("\n");
-    }
+    }*/
+	cols = cols / SUB_BITS;
+	int k, i, j;
+	for (k = 0; k < n; k++) {
+		for (i = 0; i < n; i += UI) {
+			for (j = 0; j < n / SUB_BITS; j += UJ) {
+						 c[i * cols + j] |=
+								 ((a[i * cols + (k/SUB_BITS)] >> (k%SUB_BITS))&1)
+								   & b[k * cols + j];
+			}
+		}
+	}
 }
 
 void PentagonBP::FWIabc(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
