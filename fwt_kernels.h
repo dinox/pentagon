@@ -1,18 +1,9 @@
 #include <stdint.h>
 #include <stdio.h>
 
-// These are just so my syntax checker shuts up
-#ifndef UK
-#define UK (1)
-#endif
-
-#ifndef UJ
-#define UJ (1)
-#endif
-
-#ifndef UI
-#define UI (1)
-#endif
+#define UK (2)
+#define UI (2)
+#define UJ (2)
 
 void FWI(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
     int k, i, j, i1, j1;

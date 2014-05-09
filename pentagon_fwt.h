@@ -6,9 +6,6 @@
 #include "fwt_kernels.h"
 #include <cassert>
 
-#define UI (1)
-#define UJ (1)
-
 #define L1_SIZE (1)
 
 class PentagonFWT : public Pentagon {

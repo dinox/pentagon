@@ -14,8 +14,7 @@ endif
 all: benchmark run
 
 benchmark:
-	$(CC) -o benchmark.o -c benchmark.cpp
-	$(CC) -o benchmark -c benchmark.o
+	$(CC) -o benchmark -c benchmark.cpp
 
 run:
 	./benchmark
