@@ -4,14 +4,15 @@
 #include "interval.h"
 #include "pentagon.h"
 #include <cassert>
+#include <inttypes.h>
 
-#define L1_SIZE (1)
+#define L1_SIZE (32)
 #define UK (1)
 #define UI (1)
 #define UJ (1)
 
 #define SUB_TYPE uint8_t
-#define SUB_BITS (1)
+#define SUB_BITS (8)
 
 class PentagonBP : public Pentagon {
 public:
@@ -33,7 +34,7 @@ public:
 	}
 
     bool getSubFor(int x, int y) {
-        return sub_[(x * num_of_vars_ + (y / SUB_BITS)) & (1 << (y % SUB_BITS))];
+        return sub_[(x * num_of_vars_ + (y / SUB_BITS))] & (1 << (y % SUB_BITS));
     }
 
 	Interval getIntervalFor(int var)
@@ -41,7 +42,18 @@ public:
 		return intervals_[var];
 	}
 
-	std::set<int> getSubFor(int var);
+	std::set<int> getSubFor(int var) {
+		std::set<int> r;
+		for (int i=0;i<num_of_vars_;++i)
+			if (getSubFor(var, i))
+				r.insert(i);
+		return r;
+	}
+
+	void FWI(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols);
+	void FWIabc(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols);
+	void FWT(uint8_t* a, uint8_t* b, uint8_t* c, int n, int L1);
+
 //private:
     void closure();
     void inferSubFromInterval();
@@ -67,7 +79,7 @@ int round2pow(int v) {
     return v;
 }
 
-void FWI(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
+void PentagonBP::FWI(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
     int k, i, j, i1, j1;
     for (k = 0; k < n; k++) {
         for (i = 0; i < n; i += UI) {
@@ -84,7 +96,7 @@ void FWI(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
     }
 }
 
-void FWIabc(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
+void PentagonBP::FWIabc(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
     int k, i, j, i1, j1, k1;
     for (j = 0; j < n; j += UJ) {
         for (i = 0; i < n; i += UI) {
@@ -103,7 +115,7 @@ void FWIabc(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
     }
 }
 
-void FWT(uint8_t* a, uint8_t* b, uint8_t* c, int n, int L1) {
+void PentagonBP::FWT(uint8_t* a, uint8_t* b, uint8_t* c, int n, int L1) {
     int k, i, j;
     int M = n / L1;
 
@@ -141,7 +153,7 @@ void FWT(uint8_t* a, uint8_t* b, uint8_t* c, int n, int L1) {
 
 void PentagonBP::allocate(int num_of_vars)
 {
-    num_of_vars_ = round2pow(num_of_vars);
+    num_of_vars = round2pow(num_of_vars);
     sub_ = new SUB_TYPE[num_of_vars * num_of_vars / SUB_BITS];
     for (int i = 0; i < num_of_vars * num_of_vars / SUB_BITS; i++) {
         sub_[i] = 0;
@@ -150,15 +162,6 @@ void PentagonBP::allocate(int num_of_vars)
     intervals_ = new Interval[num_of_vars];
 
     num_of_vars_ = num_of_vars;
-}
-
-std::set<int> PentagonBP::getSubFor(int var)
-{
-	std::set<int> r;
-	for (int i = 0; i < num_of_vars_; ++i)
-		if (sub_[var * num_of_vars_ + i])
-			r.insert(i);
-	return r;
 }
 
 void PentagonBP::subClosure()
@@ -170,7 +173,7 @@ void PentagonBP::subClosure()
 // Requires the domains to have same number of vars
 void PentagonBP::subJoin(SUB_TYPE* other)
 {
-    for (int i = 0; i < num_of_vars_ * num_of_vars_; i++) {
+    for (int i = 0; i < num_of_vars_ * num_of_vars_ / SUB_BITS; i++) {
         sub_[i] &= other[i];
     }
 }
@@ -187,7 +190,7 @@ void PentagonBP::inferIntervalFromSub()
 	int i,j;
 	for (i=0; i<num_of_vars_; ++i)
 		for (j=0; j<num_of_vars_; ++j)
-			if (sub_[i * num_of_vars_ + j]) {
+			if (getSubFor(i,j)) {
 				intervals_[i].assumeLessThan(intervals_[j]); // <
 				intervals_[j].assumeGreaterThan(intervals_[i]); // >
 			}
@@ -199,7 +202,7 @@ void PentagonBP::inferSubFromInterval()
 	for (i=0; i<num_of_vars_; ++i)
 		for (j=0; j<num_of_vars_; ++j)
 			if (intervals_[i].lessThan(intervals_[j]))
-				sub_[i * num_of_vars_ + j] = 1;
+				setSubFor(i, j);
 }
 
 // Pentagon domain

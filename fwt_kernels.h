@@ -1,10 +1,6 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define UK (4)
-#define UI (4)
-#define UJ (4)
-
 void FWI(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
     int k, i, j, i1, j1;
     for (k = 0; k < n; k++) {

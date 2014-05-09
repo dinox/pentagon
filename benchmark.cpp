@@ -3,7 +3,9 @@
 
 #include "pentagon_stl.h"
 #include "pentagon_dense.h"
+#include "pentagon_bp.h"
 #include "pentagon_fwt.h"
+
 
 #include <cstdio>
 #include <cstdlib>
@@ -265,6 +267,46 @@ void Benchmark::benchFWT(PentagonDM* orig)
 
 }
 
+void Benchmark::benchBP(PentagonDM* orig)
+{
+	int i,j;
+	PentagonBP* pent = new PentagonBP[nDoms];
+	for (i=0;i<nDoms;++i)
+		pent[i].allocate(nVars);
+
+	for (i=0;i<nDoms;++i) {
+		for (j=0;j<nVars;++j)
+			pent[i].setIntervalFor(j, Interval(intervals[i][j].first, intervals[i][j].second));
+		for (j=0;j<relations[i].size();++j)
+			pent[i].setSubFor(relations[i][j].first, relations[i][j].second);
+	}
+
+	Timer t(1);
+	t.start();
+
+	for (i=0;i<nJoins;++i)
+		pent[joins[i].first].join(pent[joins[i].second]);
+
+	t.stop();
+	printf("PentagonBP domain perf:\n");
+	t.print_cycles();
+
+	if (orig) { // verify
+		bool verified = true;
+
+		for (int i=0;i<nDoms;++i)
+			if (!verify(pent[i], orig[i])) {
+				printf("BP Verification failed for domain %d\n", i);
+				verified = false;
+				break;
+			}
+
+		if (verified)
+			printf("Verification completed!\n");
+	}
+
+}
+
 void print_usage()
 {
 	printf("Usage:\n");
@@ -282,6 +324,7 @@ void Benchmark::BenchAll()
 	//printf("-------------------------\n");
 	benchFWT(pentDM);
 	printf("-------------------------\n");
+	benchBP(pentDM);
 }
 
 int main(int argc, char** argv)

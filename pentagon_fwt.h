@@ -6,8 +6,6 @@
 #include "fwt_kernels.h"
 #include <cassert>
 
-#define L1_SIZE (1)
-
 class PentagonFWT : public Pentagon {
 public:
     void allocate(int nVars);
