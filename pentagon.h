@@ -4,17 +4,17 @@
 #include <set>
 #include "interval.h"
 
-class Pentagon {
+class Pentagon
+{
 public:
     void allocate(int nVars);
-    int getNumOfVars();
-    // void join(Pentagon& other);
 
     void setIntervalFor(int var, Interval i);
     void setSubFor(int x, int y);
 
-    Interval getIntervalFor(int var);
-    std::set<int> getSubFor(int var);
+    virtual int getNumOfVars() = 0;
+    virtual Interval getIntervalFor(int var) = 0;
+    virtual std::set<int> getSubFor(int var) = 0;
 };
 
 // Assumptions about the Sub domain:
