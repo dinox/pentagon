@@ -6,9 +6,8 @@
 #include "pentagon_dense.h"
 #include <cassert>
 
-
-#define SUB_TYPE uint64_t
-#define SUB_TYPE_SIZE (64)
+#define UI (1)
+#define UJ (1)
 
 class PentagonFWT : public PentagonDM {
 public:
@@ -50,6 +49,8 @@ private:
     int* sub_;
     int num_of_vars_;
 };
+
+#include "fwt_kernels.h"
 
 void PentagonFWT::allocate(int num_of_vars)
 {
