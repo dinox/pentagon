@@ -3,18 +3,12 @@
 
 #include "interval.h"
 #include "pentagon.h"
+#include "pentagon_fwt.h"
+#include "macros.h"
 #include <cassert>
 #include <inttypes.h>
 
-#define L1_SIZE (32)
-#define UK (1)
-#define UI (1)
-#define UJ (1)
-
-#define SUB_TYPE uint8_t
-#define SUB_BITS (8)
-
-class PentagonBP : public Pentagon {
+class PentagonBP : public PentagonFWT {
 public:
     void allocate(int nVars);
     void join(PentagonBP& other);

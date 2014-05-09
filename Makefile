@@ -1,6 +1,6 @@
 CC = g++
 CPPFLAGS=-I. -fno-tree-vectorize
-HEADERS=benchmark.h fwt_kernels.h interval.h pentagon_dense.h pentagon_fwt.h pentagon.h pentagon_stl.h timer.h pentagon_bp.h
+HEADERS=benchmark.h interval.h pentagon_dense.h pentagon_fwt.h pentagon.h pentagon_stl.h timer.h pentagon_bp.h
 SOURCES=benchmark
 
 DEBUG ?= 0
