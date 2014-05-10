@@ -92,8 +92,7 @@ void PentagonFWT::FWT(uint8_t* a, uint8_t* b, uint8_t* c, int n, int L1) {
 
     for (k = 0; k < M; k++) {
         // phase 1
-        // TODO: Make sure you can do like this (probably not)
-        FWI(a+k*n+k, b+k*n+k, c+k*n+k, L1, n);
+        FWI(a+L1*(k*n+k), b+L1*(k*n+k), c+L1*(k*n+k), L1, n);
 
         // phase 2
         for (j = 0; j < M; j++) {
