@@ -1,6 +1,6 @@
 CC = g++
 CPPFLAGS=-I. -fno-tree-vectorize
-HEADERS=benchmark.h interval.h pentagon_dense.h pentagon_fwt.h pentagon.h pentagon_stl.h timer.h pentagon_bp.h macros.h
+HEADERS=benchmark.h interval.h pentagon_dense.h pentagon_fwt.h pentagon.h pentagon_stl.h timer.h pentagon_bp.h macros.h simd_shift_left.h
 SOURCES=benchmark
 
 DEBUG ?= 0
@@ -13,7 +13,7 @@ else
 endif
 
 ifeq ($(AVX),1)
-	CPPFLAGS += -Wa,-q -m64 -march=corei7-avx
+	CPPFLAGS += -Wa,-q -m64 -march=corei7-avx -DAVX
 endif
 
 all: benchmark
@@ -22,7 +22,7 @@ benchmark: benchmark.cpp $(HEADERS)
 	$(CC) $(CPPFLAGS) -o benchmark benchmark.cpp
 
 run: clean all
-	./benchmark rand 256 2 1
+	./benchmark rand 1024 2 1
 
 clean:
-	rm benchmark
+	rm -f benchmark

@@ -5,6 +5,7 @@
 #include "pentagon_dense.h"
 #include "pentagon_bp.h"
 #include "pentagon_fwt.h"
+#include "pentagon_simd.h"
 
 
 #include <cstdio>
@@ -307,6 +308,46 @@ void Benchmark::benchBP(PentagonDM* orig)
 
 }
 
+void Benchmark::benchSIMD(PentagonDM* orig)
+{
+	int i,j;
+	PentagonSIMD* pent = new PentagonSIMD[nDoms];
+	for (i=0;i<nDoms;++i)
+		pent[i].allocate(nVars);
+
+	for (i=0;i<nDoms;++i) {
+		for (j=0;j<nVars;++j)
+			pent[i].setIntervalFor(j, Interval(intervals[i][j].first, intervals[i][j].second));
+		for (j=0;j<relations[i].size();++j)
+			pent[i].setSubFor(relations[i][j].first, relations[i][j].second);
+	}
+
+	Timer t(1);
+	t.start();
+
+	for (i=0;i<nJoins;++i)
+		pent[joins[i].first].join(pent[joins[i].second]);
+
+	t.stop();
+	printf("PentagonSIMD domain perf:\n");
+	t.print_cycles();
+
+	if (orig) { // verify
+		bool verified = true;
+
+		for (int i=0;i<nDoms;++i)
+			if (!verify(pent[i], orig[i])) {
+				printf("SIMD Verification failed for domain %d\n", i);
+				verified = false;
+				break;
+			}
+
+		if (verified)
+			printf("Verification completed!\n");
+	}
+
+}
+
 void print_usage()
 {
 	printf("Usage:\n");
@@ -325,6 +366,8 @@ void Benchmark::BenchAll()
 	benchFWT(pentDM);
 	printf("-------------------------\n");
 	benchBP(pentDM);
+    printf("-------------------------\n");
+	benchSIMD(pentDM);
 }
 
 int main(int argc, char** argv)

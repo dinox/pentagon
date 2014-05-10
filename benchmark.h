@@ -16,6 +16,7 @@ public:
 	void benchSTL(PentagonDM* base);
 	void benchFWT(PentagonDM* base);
 	void benchBP(PentagonDM* base);
+    void benchSIMD(PentagonDM* base);
 	// bench whatever
 
 	void loadFromFile(const char* path);
