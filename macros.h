@@ -6,8 +6,8 @@
 #define UI (4)
 #define UJ (4)
 
-#define SUB_TYPE uint8_t
-#define SUB_BITS (8)
+#define SUB_TYPE uint64_t
+#define SUB_BITS (32)
 
 #define EXPAND_LOWEST_BIT(a) (((a)&1)*(-1))
 

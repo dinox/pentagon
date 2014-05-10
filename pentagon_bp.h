@@ -37,9 +37,9 @@ public:
 		return r;
 	}
 
-	void FWI(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols);
-	void FWIabc(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols);
-	void FWT(uint8_t* a, uint8_t* b, uint8_t* c, int n, int L1);
+	void FWI(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int cols);
+	void FWIabc(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int cols);
+	void FWT(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int L1);
 
 //private:
     void closure();
@@ -68,7 +68,7 @@ int round2pow(int v) {
     return v;
 }
 
-void PentagonBP::FWI(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
+void PentagonBP::FWI(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int cols) {
 	assert( n % SUB_BITS == 0 );
 	int inner_cols = n / SUB_BITS;
 	int k, i, j, i1, j1;
@@ -85,7 +85,7 @@ void PentagonBP::FWI(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
 	}
 }
 
-void PentagonBP::FWIabc(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
+void PentagonBP::FWIabc(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int cols) {
 	assert( n % SUB_BITS == 0 );
 	assert( (a != b) && (a != c) );
 	int inner_cols = n / SUB_BITS;
@@ -105,7 +105,7 @@ void PentagonBP::FWIabc(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
 	}
 }
 
-void PentagonBP::FWT(uint8_t* a, uint8_t* b, uint8_t* c, int n, int L1) {
+void PentagonBP::FWT(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int L1) {
 	assert( n % L1 == 0 );
 	assert( n % SUB_BITS == 0 );
 

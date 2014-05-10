@@ -17,7 +17,7 @@ benchmark: benchmark.cpp $(HEADERS)
 	$(CC) $(CPPFLAGS) -o benchmark benchmark.cpp
 
 run: all
-	./benchmark rand 16 2 1
+	./benchmark rand 256 2 1
 
 erik:
 	c++ -o test.o -c test.cpp
