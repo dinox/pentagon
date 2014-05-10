@@ -63,6 +63,7 @@
 
 #define SIMD_EXTRACT_BIT(a, b) (((a) >> (b)) & 1)
 #define SIMD_SET_BIT_MASK(a) (1 << (a))
+#define SIMD_BIT_TO_MASK(a) (-1*(a))
 
 #endif
 
