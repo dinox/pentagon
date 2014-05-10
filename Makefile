@@ -4,11 +4,16 @@ HEADERS=benchmark.h interval.h pentagon_dense.h pentagon_fwt.h pentagon.h pentag
 SOURCES=benchmark
 
 DEBUG ?= 0
+AVX ?= 0
 
 ifeq ($(DEBUG),0)
-	CPPFLAGS += -O2
+	CPPFLAGS += -O3
 else
 	CPPFLAGS += -g3 -DDEBUG
+endif
+
+ifeq ($(AVX),1)
+	CPPFLAGS += -Wa,-q -m64 -march=corei7-avx
 endif
 
 all: benchmark
@@ -16,13 +21,8 @@ all: benchmark
 benchmark: benchmark.cpp $(HEADERS)
 	$(CC) $(CPPFLAGS) -o benchmark benchmark.cpp
 
-run: all
+run: clean all
 	./benchmark rand 256 2 1
-
-erik:
-	c++ -o test.o -c test.cpp
-	c++ -o test test.o
-	./test
 
 clean:
 	rm benchmark
