@@ -1,11 +1,11 @@
 #ifndef __PENTAGON_FWT__
 #define __PENTAGON_FWT__
 
-#include "pentagon.h"
+#include "pentagon_dense.h"
 #include <cassert>
 #include <stdint.h>
 
-class PentagonFWT : public Pentagon {
+class PentagonFWT : public PentagonDM {
 public:
     void allocate(int nVars);
     void join(PentagonFWT& other);
@@ -38,7 +38,7 @@ public:
 
 	void FWI(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols);
 	void FWIabc(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols);
-	void FWT(uint8_t* a, uint8_t* b, uint8_t* c, int n, int L1);
+	void FWT(uint8_t* a, int n);
 
 //private:
     void closure();
@@ -86,25 +86,25 @@ void PentagonFWT::FWIabc(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols) {
     }
 }
 
-void PentagonFWT::FWT(uint8_t* a, uint8_t* b, uint8_t* c, int n, int L1) {
+void PentagonFWT::FWT(uint8_t* a, int n) {
     int k, i, j;
-    int M = n / L1;
+    int M = n / L1_SIZE;
 
     for (k = 0; k < M; k++) {
         // phase 1
-        FWI(a+L1*(k*n+k), b+L1*(k*n+k), c+L1*(k*n+k), L1, n);
+        FWI(a+L1_SIZE*(k*n+k), a+L1_SIZE*(k*n+k), a+L1_SIZE*(k*n+k), L1_SIZE, n);
 
         // phase 2
         for (j = 0; j < M; j++) {
             if (j != k) {
-                FWI(a+L1*(k*n+k), b+L1*(k*n+j), c+L1*(k*n+j), L1, n);
+                FWI(a+L1_SIZE*(k*n+k), a+L1_SIZE*(k*n+j), a+L1_SIZE*(k*n+j), L1_SIZE, n);
             }
         }
 
         // phase 3
         for (i = 0; i < M; i++) {
             if (i != k) {
-                FWI(a+L1*(i*n+k), b+L1*(k*n+k), c+L1*(i*n+k), L1, n);
+                FWI(a+L1_SIZE*(i*n+k), a+L1_SIZE*(k*n+k), a+L1_SIZE*(i*n+k), L1_SIZE, n);
             }
         }
 
@@ -113,7 +113,7 @@ void PentagonFWT::FWT(uint8_t* a, uint8_t* b, uint8_t* c, int n, int L1) {
             if (i != k) {
                 for (int j = 0; j < M; j++) {
                     if (j != k) {
-                        FWIabc(a+L1*(i*n+k), b+L1*(k*n+j), c+L1*(i*n+j), L1, n);
+                        FWIabc(a+L1_SIZE*(i*n+k), a+L1_SIZE*(k*n+j), a+L1_SIZE*(i*n+j), L1_SIZE, n);
                     }
                 }
             }
@@ -149,7 +149,7 @@ void PentagonFWT::subClosure()
 {
     // Delegate to FWT(...)
     //FWI(sub_, sub_, sub_, num_of_vars_, num_of_vars_);
-	FWT(sub_, sub_, sub_, num_of_vars_, L1_SIZE);
+	FWT(sub_, num_of_vars_);
 }
 
 // Requires the domains to have same number of vars
