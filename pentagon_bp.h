@@ -39,7 +39,7 @@ public:
 
 	void FWI(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int cols);
 	void FWIabc(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int cols);
-	void FWT(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int L1);
+	void FWT(SUB_TYPE* a, int n);
 
 //private:
     void closure();
@@ -105,45 +105,49 @@ void PentagonBP::FWIabc(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int cols) 
 	}
 }
 
-void PentagonBP::FWT(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int L1) {
-	assert( n % L1 == 0 );
-	assert( L1 % SUB_BITS == 0 );
+void PentagonBP::FWT(SUB_TYPE* a, int n) {
+	assert( n % L1_SIZE == 0 );
+	assert( L1_SIZE % SUB_BITS == 0 );
 
 	int k, i, j;
-    int M = n / L1;
+    int M = n / L1_SIZE;
 
     int cols = n / SUB_BITS;
-    int skip = L1 / SUB_BITS;
+    int skip = L1_SIZE / SUB_BITS;
 
     for (k = 0; k < M; k++) {
-        // phase 1
-        FWI(a + k*cols + k, b + k*n + k, c+k*n+k, L1, cols);
+		// phase 1
+    	FWI(a + k*L1_SIZE*cols + k*skip, a + k*L1_SIZE*cols + k*skip, a + k*L1_SIZE*cols + k*skip, L1_SIZE, cols);
+    	//FWI(a+L1_SIZE*(k*n+k), a+L1_SIZE*(k*n+k), a+L1_SIZE*(k*n+k), L1_SIZE, n);
 
-        // phase 2
-        for (j = 0; j < M; j++) {
-            if (j != k) {
-                FWI(a+L1*(k*n+k), b+L1*(k*n+j), c+L1*(k*n+j), L1, n);
-            }
-        }
+		// phase 2
+		for (j = 0; j < M; j++) {
+			if (j != k) {
+				FWI(a + k*L1_SIZE*cols + k*skip, a + k*L1_SIZE*cols + j*skip, a + k*L1_SIZE*cols + j*skip, L1_SIZE, cols);
+				//FWI(a+L1_SIZE*(k*n+k), a+L1_SIZE*(k*n+j), a+L1_SIZE*(k*n+j), L1_SIZE, n);
+			}
+		}
 
-        // phase 3
-        for (i = 0; i < M; i++) {
-            if (i != k) {
-                FWI(a+L1*(i*n+k), b+L1*(k*n+k), c+L1*(i*n+k), L1, n);
-            }
-        }
+		// phase 3
+		for (i = 0; i < M; i++) {
+			if (i != k) {
+				FWI(a + i*L1_SIZE*cols + k*skip, a + k*L1_SIZE*cols + k*skip, a + i*L1_SIZE*cols + k*skip, L1_SIZE, cols);
+				//FWI(a+L1_SIZE*(i*n+k), a+L1_SIZE*(k*n+k), a+L1_SIZE*(i*n+k), L1_SIZE, n);
+			}
+		}
 
-        // phase 4
-        for (int i = 0; i < M; i++) {
-            if (i != k) {
-                for (int j = 0; j < M; j++) {
-                    if (j != k) {
-                        FWIabc(a+L1*(i*n+k), b+L1*(k*n+j), c+L1*(i*n+j), L1, n);
-                    }
-                }
-            }
-        }
-    }
+		// phase 4
+		for (int i = 0; i < M; i++) {
+			if (i != k) {
+				for (int j = 0; j < M; j++) {
+					if (j != k) {
+						FWIabc(a + i*L1_SIZE*cols + k*skip, a + k*L1_SIZE*cols + j*skip, a + i*L1_SIZE*cols + j*skip, L1_SIZE, cols);
+						//FWIabc(a+L1_SIZE*(i*n+k), a+L1_SIZE*(k*n+j), a+L1_SIZE*(i*n+j), L1_SIZE, n);
+					}
+				}
+			}
+		}
+	}
 }
 
 void PentagonBP::allocate(int num_of_vars)
@@ -167,7 +171,8 @@ void PentagonBP::allocate(int num_of_vars)
 void PentagonBP::subClosure()
 {
     // Delegate to FWT(...)
-    FWI(sub_, sub_, sub_, num_of_vars_, cols_);
+    //FWI(sub_, sub_, sub_, num_of_vars_, cols_);
+	FWT(sub_, num_of_vars_);
 }
 
 // Requires the domains to have same number of vars

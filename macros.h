@@ -1,7 +1,7 @@
 #ifndef __PENTAGON_MACROS__
 #define __PENTAGON_MACROS__
 
-#define L1_SIZE (16)
+#define L1_SIZE (128)
 #define UK (4)
 #define UI (4)
 #define UJ (4)
