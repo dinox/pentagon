@@ -124,7 +124,7 @@ void Benchmark::generate(int nVars, int nDoms, int nJoins)
 		intervals[i].resize(nVars);
 
 		for (v=0;v<nVars;++v)
-			if (rand_between(0,100) <= 90) {
+			if (rand_between(0,100) <= 80) {
 				intervals[i][v].first = rand_between(0,1024);
 				intervals[i][v].second = rand_between(intervals[i][v].first, intervals[i][v].first+1024);
 			} else {
@@ -134,7 +134,7 @@ void Benchmark::generate(int nVars, int nDoms, int nJoins)
 			}
 
 		sRels = nVars * nVars;
-		sRels = rand_between((int)(0.1 * (double)sRels), (int)(0.5 * (double)sRels)); // density
+		sRels = rand_between((int)(0.1 * (double)sRels), (int)(0.25 * (double)sRels)); // density
 		relations[i].resize(sRels);
 
 		for (j=0;j<sRels;++j) {

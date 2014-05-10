@@ -1,9 +1,7 @@
 #ifndef __PENTAGON_FWT__
 #define __PENTAGON_FWT__
 
-#include "interval.h"
 #include "pentagon.h"
-#include "macros.h"
 #include <cassert>
 #include <stdint.h>
 
@@ -50,7 +48,6 @@ public:
     void subJoin(uint8_t*);
     void intervalJoin(Interval* in);
     void subClosure();
-	void subLameClosure();
 
     Interval* intervals_;
     uint8_t* sub_;
@@ -128,6 +125,8 @@ void PentagonFWT::FWT(uint8_t* a, uint8_t* b, uint8_t* c, int n, int L1) {
 
 void PentagonFWT::allocate(int num_of_vars)
 {
+	assert(num_of_vars % L1_SIZE == 0);
+	assert(L1_SIZE % UI == 0);
     sub_ = new uint8_t[num_of_vars * num_of_vars];
     for (int i = 0; i < num_of_vars * num_of_vars; i++) {
         sub_[i] = 0;
@@ -151,7 +150,7 @@ void PentagonFWT::subClosure()
 {
     // Delegate to FWT(...)
     //FWI(sub_, sub_, sub_, num_of_vars_, num_of_vars_);
-	FWT(sub_, sub_, sub_, num_of_vars_, 8);
+	FWT(sub_, sub_, sub_, num_of_vars_, L1_SIZE);
 }
 
 // Requires the domains to have same number of vars

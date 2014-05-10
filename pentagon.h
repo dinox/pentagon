@@ -3,6 +3,7 @@
 
 #include <set>
 #include "interval.h"
+#include "macros.h"
 
 class Pentagon
 {

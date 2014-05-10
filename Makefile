@@ -14,7 +14,7 @@ endif
 all: benchmark
 
 benchmark: benchmark.cpp $(HEADERS)
-	$(CC) -o benchmark benchmark.cpp
+	$(CC) $(CPPFLAGS) -o benchmark benchmark.cpp
 
 run: all
 	./benchmark rand 16 2 1

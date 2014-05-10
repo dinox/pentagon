@@ -40,7 +40,6 @@ private:
     void subJoin(int*);
     void intervalJoin(Interval* in);
     void subClosure();
-	void subLameClosure();
 
     Interval* intervals_;
     int* sub_;
