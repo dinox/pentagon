@@ -162,7 +162,7 @@ void Benchmark::generate(int nVars, int nDoms, int nJoins)
 	}
 }
 
-PentagonDM* Benchmark::benchDM()
+void Benchmark::benchDM()
 {
 	int i,j;
 	PentagonDM* pent = new PentagonDM[nDoms];
@@ -183,12 +183,14 @@ PentagonDM* Benchmark::benchDM()
 		pent[joins[i].first].join(pent[joins[i].second]);
 
 	t.stop();
-	printf("PentagonDM domain perf:\n");
-	t.print_cycles();
-	return pent;
+
+	printf("%8s%12.3lf%10s%8s\n", "DM", (double)OP_COUNT(nVars)/(double)t.get_cycles(), "--", "--");
+
+	dmCycles = t.get_cycles();
+	dmDomain = pent;
 }
 
-void Benchmark::benchSTL(PentagonDM* orig)
+void Benchmark::benchSTL()
 {
 	int i,j;
 	PentagonSTL* pent = new PentagonSTL[nDoms];
@@ -209,26 +211,17 @@ void Benchmark::benchSTL(PentagonDM* orig)
 		pent[joins[i].first].join(pent[joins[i].second]);
 
 	t.stop();
-	printf("PentagonSTL domain perf:\n");
-	t.print_cycles();
+	bool verified = true;
+	for (int i=0;i<nDoms;++i)
+		if (!verify(pent[i], dmDomain[i])) {
+			verified = false;
+			break;
+		}
 
-	if (orig) { // verify
-		bool verified = true;
-
-		for (int i=0;i<nDoms;++i)
-			if (!verify(pent[i], orig[i])) {
-				printf("STL Verification failed for domain %d\n", i);
-				verified = false;
-				break;
-			}
-
-		if (verified)
-			printf("Verification completed!\n");
-	}
-
+	printf("%8s%12.3lf%9.3lfx%8s\n", "STL", (double)OP_COUNT(nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), verified ? "OK" : "FAIL");
 }
 
-void Benchmark::benchFWT(PentagonDM* orig)
+void Benchmark::benchFWT()
 {
 	int i,j;
 	PentagonFWT* pent = new PentagonFWT[nDoms];
@@ -249,26 +242,19 @@ void Benchmark::benchFWT(PentagonDM* orig)
 		pent[joins[i].first].join(pent[joins[i].second]);
 
 	t.stop();
-	printf("PentagonFWT domain perf:\n");
-	t.print_cycles();
 
-	if (orig) { // verify
-		bool verified = true;
+	bool verified = true;
+	for (int i=0;i<nDoms;++i)
+		if (!verify(pent[i], dmDomain[i])) {
+			verified = false;
+			break;
+		}
 
-		for (int i=0;i<nDoms;++i)
-			if (!verify(pent[i], orig[i])) {
-				printf("FWT Verification failed for domain %d\n", i);
-				verified = false;
-				break;
-			}
-
-		if (verified)
-			printf("Verification completed!\n");
-	}
+	printf("%8s%12.3lf%9.3lfx%8s\n", "FWT", (double)OP_COUNT(nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), verified ? "OK" : "FAIL");
 
 }
 
-void Benchmark::benchBP(PentagonDM* orig)
+void Benchmark::benchBP()
 {
 	int i,j;
 	PentagonBP* pent = new PentagonBP[nDoms];
@@ -289,26 +275,18 @@ void Benchmark::benchBP(PentagonDM* orig)
 		pent[joins[i].first].join(pent[joins[i].second]);
 
 	t.stop();
-	printf("PentagonBP domain perf:\n");
-	t.print_cycles();
 
-	if (orig) { // verify
-		bool verified = true;
+	bool verified = true;
+	for (int i=0;i<nDoms;++i)
+		if (!verify(pent[i], dmDomain[i])) {
+			verified = false;
+			break;
+		}
 
-		for (int i=0;i<nDoms;++i)
-			if (!verify(pent[i], orig[i])) {
-				printf("BP Verification failed for domain %d\n", i);
-				verified = false;
-				break;
-			}
-
-		if (verified)
-			printf("Verification completed!\n");
-	}
-
+	printf("%8s%12.3lf%9.3lfx%8s\n", "BP", (double)OP_COUNT(nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), verified ? "OK" : "FAIL");
 }
 
-void Benchmark::benchSIMD(PentagonDM* orig)
+void Benchmark::benchSIMD()
 {
 	int i,j;
 	PentagonSIMD* pent = new PentagonSIMD[nDoms];
@@ -329,23 +307,15 @@ void Benchmark::benchSIMD(PentagonDM* orig)
 		pent[joins[i].first].join(pent[joins[i].second]);
 
 	t.stop();
-	printf("PentagonSIMD domain perf:\n");
-	t.print_cycles();
 
-	if (orig) { // verify
-		bool verified = true;
+	bool verified = true;
+	for (int i=0;i<nDoms;++i)
+		if (!verify(pent[i], dmDomain[i])) {
+			verified = false;
+			break;
+		}
 
-		for (int i=0;i<nDoms;++i)
-			if (!verify(pent[i], orig[i])) {
-				printf("SIMD Verification failed for domain %d\n", i);
-				verified = false;
-				break;
-			}
-
-		if (verified)
-			printf("Verification completed!\n");
-	}
-
+	printf("%8s%12.3lf%9.3lfx%8s\n", "SIMD", (double)OP_COUNT(nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), verified ? "OK" : "FAIL");
 }
 
 void print_usage()
@@ -359,15 +329,12 @@ void print_usage()
 
 void Benchmark::BenchAll()
 {
-	PentagonDM* pentDM = benchDM();
-	printf("-------------------------\n");
-	//benchSTL(pentDM);
-	//printf("-------------------------\n");
-	benchFWT(pentDM);
-	printf("-------------------------\n");
-	benchBP(pentDM);
-    printf("-------------------------\n");
-	benchSIMD(pentDM);
+	printf("%8s%12s%10s%8s\n", "Domain", "Ops/cycle", "Perf", "Verify");
+	benchDM();
+	benchFWT();
+	benchBP();
+	benchSIMD();
+	//benchSTL();
 }
 
 int main(int argc, char** argv)

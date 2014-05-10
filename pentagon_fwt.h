@@ -40,7 +40,7 @@ public:
 	void FWIabc(uint8_t* a, uint8_t* b, uint8_t* c, int n, int cols);
 	void FWT(uint8_t* a, int n);
 
-//private:
+private:
     void closure();
     void inferSubFromInterval();
     void inferIntervalFromSub();

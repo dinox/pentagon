@@ -41,7 +41,7 @@ public:
 	void FWIabc(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int cols);
 	void FWT(SUB_TYPE* a, int n);
 
-//private:
+private:
     void closure();
     void inferSubFromInterval();
     void inferIntervalFromSub();
