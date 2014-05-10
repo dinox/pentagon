@@ -1,5 +1,5 @@
 CC = g++
-CPPFLAGS=-I. -fno-tree-vectorize
+CPPFLAGS=-I. -fno-tree-vectorize -funroll-loops
 HEADERS=benchmark.h interval.h pentagon_dense.h pentagon_fwt.h pentagon.h pentagon_stl.h timer.h pentagon_bp.h macros.h simd_shift_left.h
 SOURCES=benchmark
 
