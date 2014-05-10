@@ -107,14 +107,17 @@ void PentagonBP::FWIabc(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int cols) 
 
 void PentagonBP::FWT(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int L1) {
 	assert( n % L1 == 0 );
-	assert( n % SUB_BITS == 0 );
+	assert( L1 % SUB_BITS == 0 );
 
 	int k, i, j;
     int M = n / L1;
 
+    int cols = n / SUB_BITS;
+    int skip = L1 / SUB_BITS;
+
     for (k = 0; k < M; k++) {
         // phase 1
-        FWI(a + L1*(k*n+k), b + L1*(k*n+k), c+L1*(k*n+k), L1, n);
+        FWI(a + k*cols + k, b + k*n + k, c+k*n+k, L1, cols);
 
         // phase 2
         for (j = 0; j < M; j++) {
