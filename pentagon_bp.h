@@ -85,7 +85,7 @@ void PentagonBP::FWI(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int cols) {
 	}
 }
 
-void PentagonBP::FWIabc(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int cols) {
+void PentagonBP::FWIabc(SUB_TYPE*__restrict__ a, SUB_TYPE*__restrict__ b, SUB_TYPE*__restrict__ c, int n, int cols) {
 	assert( n % SUB_BITS == 0 );
 	assert( (a != b) && (a != c) );
 	int inner_cols = n / SUB_BITS;
@@ -107,7 +107,7 @@ void PentagonBP::FWIabc(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int cols) 
 
 void PentagonBP::FWT(SUB_TYPE* a, int n) {
 	assert( n % L1_SIZE == 0 );
-	assert( L1_SIZE % SUB_BITS == 0 );
+	assert( L1_SIZE % (UJ * SUB_BITS) == 0 );
 
 	int k, i, j;
     int M = n / L1_SIZE;

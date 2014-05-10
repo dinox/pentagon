@@ -36,10 +36,12 @@ bool verify(Pentagon& a, Pentagon& b)
 	for (int i=0;i<nVars;++i) {
 		if (!(a.getSubFor(i) == b.getSubFor(i))) {
 			printf("Different SUB sets for var %d.\n", i);
+			/*
 			printf("Current: ");
 			printSet(a.getSubFor(i));
 			printf("DM: ");
 			printSet(b.getSubFor(i));
+			*/
 			return false;
 		}
 	}
@@ -50,8 +52,10 @@ bool verify(Pentagon& a, Pentagon& b)
 		y = b.getIntervalFor(i);
 		if (!(x == y)) {
 			printf("Different INTERVALs for var %d.\n", i);
+			/*
 			printf("Current: [%d,%d]\n", x.l_, x.h_);
 			printf("DM: [%d,%d]\n", y.l_, y.h_);
+			*/
 			return false;
 		}
 	}
@@ -331,7 +335,7 @@ void Benchmark::BenchAll()
 {
 	printf("%8s%12s%10s%8s\n", "Domain", "Ops/cycle", "Perf", "Verify");
 	benchDM();
-	benchFWT();
+	//benchFWT();
 	benchBP();
 	benchSIMD();
 	//benchSTL();
