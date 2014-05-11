@@ -5,6 +5,7 @@ SOURCES=benchmark
 
 DEBUG ?= 0
 AVX ?= 0
+SSE ?= 0
 
 ifeq ($(DEBUG),0)
 	CPPFLAGS += -O3
@@ -14,6 +15,10 @@ endif
 
 ifeq ($(AVX),1)
 	CPPFLAGS += -Wa,-q -m64 -march=corei7-avx -DAVX
+endif
+
+ifeq ($(SSE),1)
+	CPPFLAGS += -Wa,-q -m64 -march=core2 -msse4.1 -DAVX
 endif
 
 all: benchmark
