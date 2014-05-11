@@ -72,12 +72,14 @@ void PentagonBP::FWI(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int cols) {
 	assert( n % SUB_BITS == 0 );
 	int inner_cols = n / SUB_BITS;
 	int k, i, j, i1, j1;
+	int t;
 	for (k = 0; k < n; ++k) {
 		for (i = 0; i < n; i += UI) {
 			for (j = 0; j < inner_cols; j += UJ) {
 				for (i1 = i; i1 < i+UI; ++i1) {
+					t = EXPAND_LOWEST_BIT(a[i1 * cols + (k / SUB_BITS)] >> (k % SUB_BITS));
 					for (j1 = j; j1 < j+UJ; ++j1) {
-						c[i1 * cols + j1] |= EXPAND_LOWEST_BIT(a[i1 * cols + (k / SUB_BITS)] >> (k % SUB_BITS)) & b[k * cols + j1];
+						c[i1 * cols + j1] |= t & b[k * cols + j1];
 					}
 				}
 			}
@@ -90,13 +92,15 @@ void PentagonBP::FWIabc(SUB_TYPE*__restrict__ a, SUB_TYPE*__restrict__ b, SUB_TY
 	assert( (a != b) && (a != c) );
 	int inner_cols = n / SUB_BITS;
 	int i, j, k, i1, j1, k1;
+	int t;
 	for (i = 0; i < n; i += UI) {
 		for (j = 0; j < inner_cols; j += UJ) {
 			for (k = 0; k < n; k += UK) {
 				for (k1 = k; k1 < k+UK; ++k1) {
 					for (i1 = i; i1 < i+UI; ++i1) {
+						t = EXPAND_LOWEST_BIT(a[i1 * cols + (k1 / SUB_BITS)] >> (k1 % SUB_BITS));
 						for (j1 = j; j1 < j+UJ; ++j1) {
-							c[i1 * cols + j1] |= EXPAND_LOWEST_BIT(a[i1 * cols + (k1 / SUB_BITS)] >> (k1 % SUB_BITS)) & b[k1 * cols + j1];
+							c[i1 * cols + j1] |= t & b[k1 * cols + j1];
 						}
 					}
 				}
