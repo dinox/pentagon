@@ -10,7 +10,7 @@
 
 // sweet spot
 #ifndef UALL
-#define UALL 1
+#define UALL 4
 #endif
 
 // UK doesn't matter
@@ -45,6 +45,13 @@
 #define SIMD_TYPE __m128i
 #define SIMD_BITS (128)
 
+#define SIMD_INT_TYPE uint32_t
+#define SIMD_INT_BITS (32)
+#define SIMD_INT_COUNT (4)
+
+// a : int
+#define SIMD_SET_ALL(a) _mm_set1_epi32(a)
+
 // a : int
 #define SIMD_FROM_INT(a) _mm_setr_epi32(a,0,0,0)
 // a : SIMD_TYPE
@@ -72,6 +79,12 @@
 
 #define SIMD_TYPE uint32_t
 #define SIMD_BITS (32)
+
+#define SIMD_INT_TYPE uint32_t
+#define SIMD_INT_BITS (32)
+#define SIMD_INT_COUNT (1)
+
+#define SIMD_SET_ALL(a) (a)
 
 #define SIMD_FROM_INT(a) (a)
 

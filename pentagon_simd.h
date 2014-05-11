@@ -17,13 +17,11 @@ public:
 	}
 
 	void setSubFor(int x, int y) {
-		int* ss = (int*)sub_;
-		ss[x * cols_ + (y / SUB_BITS)] |= (1 << (y % SUB_BITS));
+		ss[x * cols_ * SIMD_INT_COUNT + (y / SUB_BITS)] |= (1 << (y % SUB_BITS));
 	}
 
     bool getSubFor(int x, int y) {
-    	int* ss = (int*)sub_;
-    	return ((ss[(x * cols_ + (y / SUB_BITS))] >> (y % SUB_BITS)) & 1);
+    	return ((ss[(x * cols_ * SIMD_INT_COUNT + (y / SUB_BITS))] >> (y % SUB_BITS)) & 1);
     }
 
     Interval getIntervalFor(int var) {
@@ -51,6 +49,7 @@ public:
     void intervalJoin(Interval* in);
     void subClosure();
 
+    SIMD_INT_TYPE* ss;
     Interval* intervals_;
     SIMD_TYPE* sub_;
     int num_of_vars_;
@@ -65,9 +64,9 @@ void PentagonSIMD::FWI(SIMD_TYPE* a, SIMD_TYPE* b, SIMD_TYPE* c, int n, int cols
 		for (i = 0; i < n; i += UI) {
 			for (j = 0; j < inner_cols; j += UJ) {
 				for (i1 = i; i1 < i+UI; ++i1) {
-                    SIMD_TYPE a_i1_k = a[i1 * cols + (k / SIMD_BITS)];
-                    int bit = SIMD_EXTRACT_BIT(a_i1_k, k % SIMD_BITS);
-                    SIMD_TYPE mask = SIMD_BIT_TO_MASK(bit);
+					SIMD_INT_TYPE a_i1_k = ((SIMD_INT_TYPE*)a)[i1 * cols * SIMD_INT_COUNT + (k / SIMD_INT_BITS)];
+					SIMD_INT_TYPE bitmask = ((a_i1_k >> (k % SIMD_INT_BITS)) & 1) * (-1);
+                    SIMD_TYPE mask = SIMD_SET_ALL(bitmask);
 					for (j1 = j; j1 < j+UJ; ++j1) {
                         SIMD_TYPE rh = SIMD_AND(mask, b[k * cols + j1]);
                         SIMD_TYPE c_i1_j1 = c[i1 * cols + j1];
@@ -160,10 +159,9 @@ void PentagonSIMD::allocate(int num_of_vars)
     for (int i = 0; i < num_of_vars * cols_; i++) {
         sub_[i] = SIMD_FROM_INT(0);
     }
+    ss = (SIMD_INT_TYPE*)sub_;
 
     intervals_ = new Interval[num_of_vars];
-
-
 }
 
 void PentagonSIMD::subClosure()
