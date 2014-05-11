@@ -10,7 +10,7 @@
 
 // sweet spot
 #ifndef UALL
-#define UALL 16
+#define UALL 1
 #endif
 
 // UK doesn't matter

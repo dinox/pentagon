@@ -347,10 +347,10 @@ void print_usage()
 void Benchmark::BenchAll()
 {
 	printf("%8s%12s%10s%10s%8s\n", "Domain", "Ops/cycle", "Perf", "Time", "Verify");
-	//benchDM();
+	benchDM();
 	//benchFWT();
 	benchBP();
-	//benchSIMD();
+	benchSIMD();
 	//benchSTL();
 }
 
