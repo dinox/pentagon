@@ -17,13 +17,13 @@ public:
 	}
 
 	void setSubFor(int x, int y) {
-        SIMD_TYPE sub_x_y = sub_[x * cols_ + (y / SIMD_BITS)];
-		sub_[x * cols_ + (y / SIMD_BITS)] = SIMD_OR(sub_x_y, SIMD_SET_BIT_MASK(y % SIMD_BITS));
+		int* ss = (int*)sub_;
+		ss[x * cols_ + (y / SUB_BITS)] |= (1 << (y % SUB_BITS));
 	}
 
     bool getSubFor(int x, int y) {
-        SIMD_TYPE sub_x_y = sub_[(x * cols_ + (y / SIMD_BITS))];
-        return SIMD_EXTRACT_BIT(sub_x_y, y % SIMD_BITS);
+    	int* ss = (int*)sub_;
+    	return ((ss[(x * cols_ + (y / SUB_BITS))] >> (y % SUB_BITS)) & 1);
     }
 
     Interval getIntervalFor(int var) {

@@ -13,7 +13,7 @@ else
 endif
 
 ifeq ($(AVX),1)
-	CPPFLAGS += -Wa,-q -m64 -march=corei7-avx -DAVX
+	CPPFLAGS += -Wa,-q -m64 -march=core2 -msse4.1 -DAVX
 endif
 
 all: benchmark
