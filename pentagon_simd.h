@@ -88,13 +88,14 @@ void PentagonSIMD::FWIabc(SIMD_TYPE*__restrict__ a, SIMD_TYPE*__restrict__ b, SI
 			for (k = 0; k < n; k += UK) {
                 for (k1 = k; k1 < k+UK; ++k1) {
                     for (i1 = i; i1 < i+UI; ++i1) {
-                        SIMD_TYPE a_i1_k = a[i1 * cols + (k / SIMD_BITS)];
-                        int bit = SIMD_EXTRACT_BIT(a_i1_k, k % SIMD_BITS);
-                        SIMD_TYPE mask = SIMD_FROM_INT(-bit);
-                        for (j1 = j; j1 < j+UJ; ++j1) {
-                            SIMD_TYPE rh = mask & b[k1 * cols + j1];
-                            c[i1 * cols + j1] |= rh;
-                        }
+                    	SIMD_INT_TYPE a_i1_k = ((SIMD_INT_TYPE*)a)[i1 * cols * SIMD_INT_COUNT + (k / SIMD_INT_BITS)];
+						SIMD_INT_TYPE bitmask = ((a_i1_k >> (k % SIMD_INT_BITS)) & 1) * (-1);
+						SIMD_TYPE mask = SIMD_SET_ALL(bitmask);
+						for (j1 = j; j1 < j+UJ; ++j1) {
+							SIMD_TYPE rh = SIMD_AND(mask, b[k * cols + j1]);
+							SIMD_TYPE c_i1_j1 = c[i1 * cols + j1];
+							c[i1 * cols + j1] = SIMD_OR(c_i1_j1, rh);
+						}
                     }
 				}
 			}
@@ -167,8 +168,8 @@ void PentagonSIMD::allocate(int num_of_vars)
 void PentagonSIMD::subClosure()
 {
     // Delegate to FWT(...)
-    FWI(sub_, sub_, sub_, num_of_vars_, cols_);
-	//FWT(sub_, num_of_vars_);
+    //FWI(sub_, sub_, sub_, num_of_vars_, cols_);
+	FWT(sub_, num_of_vars_);
 }
 
 // Requires the domains to have same number of vars
