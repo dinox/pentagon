@@ -3,18 +3,22 @@
 
 #include <stdint.h>
 
+// this should be <= L2 cache size / 8 (bit packing) / 3 (matrices)
 #ifndef L1_SIZE
 #define L1_SIZE (512)
 #endif
 
+// sweet spot
 #ifndef UALL
-#define UALL 8
+#define UALL 16
 #endif
 
+// UK doesn't matter
 #ifndef UK
 #define UK (UALL)
 #endif
 
+// UI should be equal to UJ
 #ifndef UI
 #define UI (UALL)
 #endif
