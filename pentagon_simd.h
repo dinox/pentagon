@@ -79,7 +79,7 @@ void PentagonSIMD::FWI(SIMD_TYPE* a, SIMD_TYPE* b, SIMD_TYPE* c, int n, int cols
 	}
 }
 
-void PentagonSIMD::FWIabc(SIMD_TYPE* a, SIMD_TYPE* b, SIMD_TYPE* c, int n, int cols) {
+void PentagonSIMD::FWIabc(SIMD_TYPE*__restrict__ a, SIMD_TYPE*__restrict__ b, SIMD_TYPE*__restrict__ c, int n, int cols) {
 	assert( n % SIMD_BITS == 0 );
 	assert( (a != b) && (a != c) );
 	int inner_cols = n / SIMD_BITS;

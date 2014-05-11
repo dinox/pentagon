@@ -10,29 +10,29 @@ public:
     void allocate(int nVars);
     void join(PentagonFWT& other);
 
-    int getNumOfVars()
+    inline int getNumOfVars()
 	{
 		return num_of_vars_;
 	}
 
-	void setIntervalFor(int var, Interval i)
+    inline void setIntervalFor(int var, Interval i)
 	{
 		intervals_[var] = i;
 	}
 
-	void setSubFor(int x, int y)
+	inline void setSubFor(int x, int y)
 	{
 		sub_[x * num_of_vars_ + y] = 1;
 	}
 
-	Interval getIntervalFor(int var)
+	inline Interval getIntervalFor(int var)
 	{
 		return intervals_[var];
 	}
 
 	std::set<int> getSubFor(int var);
 
-    bool getSubFor(int x, int y) {
+    inline bool getSubFor(int x, int y) {
         return !!sub_[x * num_of_vars_ + y];
     }
 

@@ -188,7 +188,7 @@ void Benchmark::benchDM()
 
 	t.stop();
 
-	printf("%8s%12.3lf%10s%8s\n", "DM", (double)OP_COUNT(nVars)/(double)t.get_cycles(), "--", "--");
+	printf("%8s%12.3lf%10s%10.2lf%8s\n", "DM", (double)OP_COUNT(nVars)/(double)t.get_cycles(), "--", (double)t.get_cycles() / (double)CPU_FREQ, "--");
 
 	dmCycles = t.get_cycles();
 	dmDomain = pent;
@@ -215,14 +215,18 @@ void Benchmark::benchSTL()
 		pent[joins[i].first].join(pent[joins[i].second]);
 
 	t.stop();
-	bool verified = true;
-	for (int i=0;i<nDoms;++i)
-		if (!verify(pent[i], dmDomain[i])) {
-			verified = false;
-			break;
-		}
 
-	printf("%8s%12.3lf%9.3lfx%8s\n", "STL", (double)OP_COUNT(nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), verified ? "OK" : "FAIL");
+	bool verified = false;
+	if (dmDomain != NULL) {
+		verified = true;
+		for (int i=0;i<nDoms;++i)
+			if (!verify(pent[i], dmDomain[i])) {
+				verified = false;
+				break;
+			}
+	}
+
+	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "STL", (double)OP_COUNT(nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
 }
 
 void Benchmark::benchFWT()
@@ -247,14 +251,17 @@ void Benchmark::benchFWT()
 
 	t.stop();
 
-	bool verified = true;
-	for (int i=0;i<nDoms;++i)
-		if (!verify(pent[i], dmDomain[i])) {
-			verified = false;
-			break;
-		}
+	bool verified = false;
+	if (dmDomain != NULL) {
+		verified = true;
+		for (int i=0;i<nDoms;++i)
+			if (!verify(pent[i], dmDomain[i])) {
+				verified = false;
+				break;
+			}
+	}
 
-	printf("%8s%12.3lf%9.3lfx%8s\n", "FWT", (double)OP_COUNT(nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), verified ? "OK" : "FAIL");
+	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "FWT", (double)OP_COUNT(nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
 
 }
 
@@ -280,14 +287,17 @@ void Benchmark::benchBP()
 
 	t.stop();
 
-	bool verified = true;
-	for (int i=0;i<nDoms;++i)
-		if (!verify(pent[i], dmDomain[i])) {
-			verified = false;
-			break;
-		}
+	bool verified = false;
+	if (dmDomain != NULL) {
+		verified = true;
+		for (int i=0;i<nDoms;++i)
+			if (!verify(pent[i], dmDomain[i])) {
+				verified = false;
+				break;
+			}
+	}
 
-	printf("%8s%12.3lf%9.3lfx%8s\n", "BP", (double)OP_COUNT(nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), verified ? "OK" : "FAIL");
+	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "BP", (double)OP_COUNT(nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
 }
 
 void Benchmark::benchSIMD()
@@ -312,14 +322,17 @@ void Benchmark::benchSIMD()
 
 	t.stop();
 
-	bool verified = true;
-	for (int i=0;i<nDoms;++i)
-		if (!verify(pent[i], dmDomain[i])) {
-			verified = false;
-			break;
-		}
+	bool verified = false;
+	if (dmDomain != NULL) {
+		verified = true;
+		for (int i=0;i<nDoms;++i)
+			if (!verify(pent[i], dmDomain[i])) {
+				verified = false;
+				break;
+			}
+	}
 
-	printf("%8s%12.3lf%9.3lfx%8s\n", "SIMD", (double)OP_COUNT(nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), verified ? "OK" : "FAIL");
+	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "SIMD", (double)OP_COUNT(nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
 }
 
 void print_usage()
@@ -333,11 +346,11 @@ void print_usage()
 
 void Benchmark::BenchAll()
 {
-	printf("%8s%12s%10s%8s\n", "Domain", "Ops/cycle", "Perf", "Verify");
-	benchDM();
+	printf("%8s%12s%10s%10s%8s\n", "Domain", "Ops/cycle", "Perf", "Time", "Verify");
+	//benchDM();
 	//benchFWT();
 	benchBP();
-	benchSIMD();
+	//benchSIMD();
 	//benchSTL();
 }
 

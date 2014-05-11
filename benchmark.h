@@ -3,12 +3,17 @@
 
 #include "pentagon_dense.h"
 #include <vector>
+#include <stddef.h>
 using namespace std;
 
 class Benchmark
 {
 public:
 	int nVars, nDoms, nJoins;
+	Benchmark() {
+		dmCycles = 0;
+		dmDomain = NULL;
+	}
 	void generate(int nVars, int nDoms, int nJoins);
 
 	void BenchAll();

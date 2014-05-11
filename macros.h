@@ -3,10 +3,27 @@
 
 #include <stdint.h>
 
-#define L1_SIZE (128)
-#define UK (4)
-#define UI (4)
-#define UJ (4)
+#ifndef L1_SIZE
+#define L1_SIZE (512)
+#endif
+
+#ifndef UALL
+#define UALL 8
+#endif
+
+#ifndef UK
+#define UK (UALL)
+#endif
+
+#ifndef UI
+#define UI (UALL)
+#endif
+
+#ifndef UJ
+#define UJ (UALL)
+#endif
+
+#define CPU_FREQ 2200000000ll
 
 #define SUB_TYPE uint32_t
 #define SUB_BITS (32)
