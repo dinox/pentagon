@@ -69,7 +69,6 @@ int round2pow(int v) {
 }
 
 void PentagonBP::FWI(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int cols) {
-	assert( n % SUB_BITS == 0 );
 	int inner_cols = n / SUB_BITS;
 	int k, i, j, i1, j1;
 	int t;
@@ -88,7 +87,6 @@ void PentagonBP::FWI(SUB_TYPE* a, SUB_TYPE* b, SUB_TYPE* c, int n, int cols) {
 }
 
 void PentagonBP::FWIabc(SUB_TYPE*__restrict__ a, SUB_TYPE*__restrict__ b, SUB_TYPE*__restrict__ c, int n, int cols) {
-	assert( n % SUB_BITS == 0 );
 	assert( (a != b) && (a != c) );
 	int inner_cols = n / SUB_BITS;
 	int i, j, k, i1, j1, k1;
@@ -110,9 +108,6 @@ void PentagonBP::FWIabc(SUB_TYPE*__restrict__ a, SUB_TYPE*__restrict__ b, SUB_TY
 }
 
 void PentagonBP::FWT(SUB_TYPE* a, int n) {
-	assert( n % L1_SIZE == 0 );
-	assert( L1_SIZE % (UJ * SUB_BITS) == 0 );
-
 	int k, i, j;
     int M = n / L1_SIZE;
 
@@ -157,7 +152,9 @@ void PentagonBP::FWT(SUB_TYPE* a, int n) {
 void PentagonBP::allocate(int num_of_vars)
 {
     //num_of_vars = round2pow(num_of_vars);
-	assert( (num_of_vars % (UJ * SUB_BITS)) == 0 );
+
+	assert( num_of_vars % L1_SIZE == 0 );
+	assert( L1_SIZE % (SUB_BITS * UJ) == 0 );
 
 	num_of_vars_ = num_of_vars;
 	cols_ = num_of_vars / SUB_BITS;

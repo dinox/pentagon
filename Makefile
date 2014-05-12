@@ -1,5 +1,5 @@
 CC = g++
-CPPFLAGS += -I. -fno-tree-vectorize -funroll-loops
+override CPPFLAGS+=-I. -fno-tree-vectorize -funroll-loops
 HEADERS=benchmark.h interval.h pentagon_dense.h pentagon_fwt.h pentagon.h pentagon_stl.h timer.h pentagon_bp.h macros.h simd_shift_left.h pentagon_simd.h
 SOURCES=benchmark
 
@@ -8,17 +8,17 @@ AVX ?= 0
 SSE ?= 0
 
 ifeq ($(DEBUG),0)
-	CPPFLAGS += -O3
+	override CPPFLAGS += -O3
 else
-	CPPFLAGS += -g3 -DDEBUG
+	override CPPFLAGS += -g3 -DDEBUG
 endif
 
 ifeq ($(AVX),1)
-	CPPFLAGS += -Wa,-q -m64 -march=core2 -msse4.1 -DAVX
+	override CPPFLAGS += -Wa,-q -m64 -march=corei7-avx -DAVX
 endif
 
 ifeq ($(SSE),1)
-	CPPFLAGS += -m64 -march=core2 -msse4.1 -DAVX
+	override CPPFLAGS += -m64 -march=core2 -msse4.1 -DAVX
 endif
 
 all: benchmark

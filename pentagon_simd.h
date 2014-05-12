@@ -57,7 +57,6 @@ public:
 };
 
 void PentagonSIMD::FWI(SIMD_TYPE* a, SIMD_TYPE* b, SIMD_TYPE* c, int n, int cols) {
-	assert( n % SIMD_BITS == 0 );
 	int inner_cols = n / SIMD_BITS;
 	int k, i, j, i1, j1;
 	for (k = 0; k < n; ++k) {
@@ -79,7 +78,6 @@ void PentagonSIMD::FWI(SIMD_TYPE* a, SIMD_TYPE* b, SIMD_TYPE* c, int n, int cols
 }
 
 void PentagonSIMD::FWIabc(SIMD_TYPE*__restrict__ a, SIMD_TYPE*__restrict__ b, SIMD_TYPE*__restrict__ c, int n, int cols) {
-	assert( n % SIMD_BITS == 0 );
 	assert( (a != b) && (a != c) );
 	int inner_cols = n / SIMD_BITS;
 	int i, j, k, i1, j1, k1;
@@ -104,9 +102,6 @@ void PentagonSIMD::FWIabc(SIMD_TYPE*__restrict__ a, SIMD_TYPE*__restrict__ b, SI
 }
 
 void PentagonSIMD::FWT(SIMD_TYPE* a, int n) {
-	assert( n % L1_SIZE == 0 );
-	assert( L1_SIZE % SIMD_BITS == 0 );
-
 	int k, i, j;
     int M = n / L1_SIZE;
 
@@ -151,7 +146,9 @@ void PentagonSIMD::FWT(SIMD_TYPE* a, int n) {
 void PentagonSIMD::allocate(int num_of_vars)
 {
     //num_of_vars = round2pow(num_of_vars);
-	assert( (num_of_vars % (UJ * SIMD_BITS)) == 0 );
+
+	assert( num_of_vars % L1_SIZE == 0 );
+	assert( L1_SIZE % (SIMD_BITS * UJ) == 0 );
 
 	num_of_vars_ = num_of_vars;
 	cols_ = num_of_vars / SIMD_BITS;
