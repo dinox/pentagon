@@ -307,7 +307,7 @@ void Benchmark::benchSIMD()
 #elif defined SSE
 	printf("SIMD is using SSE\n");
 #else
-    printf("SIMD is using SSE\n");
+    printf("SIMD is using scalar unit\n");
 #endif
 	int i,j;
 	PentagonSIMD* pent = new PentagonSIMD[nDoms];
