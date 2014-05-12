@@ -5,12 +5,12 @@
 
 // this should be <= L2 cache size / 8 (bit packing) / 3 (matrices)
 #ifndef L1_SIZE
-#define L1_SIZE (512)
+#define L1_SIZE (1024)
 #endif
 
 // sweet spot
 #ifndef UALL
-#define UALL 4
+#define UALL 8
 #endif
 
 // UK doesn't matter
@@ -33,7 +33,7 @@
 #define SUB_BITS (32)
 #define EXPAND_LOWEST_BIT(a) (((a)&1)*(-1))
 
-#define OP_COUNT(n) (2*(n)*(n)*(n) + 50*(n)*(n))
+#define OP_COUNT(n) (3*(n)*(n)*(n) + 10*(n)*(n))
 
 // ------------ AVX / SSE macros for SIMD implementation ------------
 
