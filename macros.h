@@ -5,12 +5,12 @@
 
 // this should be <= L2 cache size / 8 (bit packing) / 3 (matrices)
 #ifndef L1_SIZE
-#define L1_SIZE (512)
+#define L1_SIZE (4096)
 #endif
 
 // sweet spot
 #ifndef UALL
-#define UALL 4
+#define UALL 16
 #endif
 
 // UK doesn't matter
@@ -36,8 +36,11 @@
 #define OP_COUNT(n) (2*(n)*(n)*(n) + 50*(n)*(n))
 
 // ------------ AVX / SSE macros for SIMD implementation ------------
-
 #ifdef AVX
+#define SSE
+#endif
+
+#ifdef SSE
 
 #include "immintrin.h"
 #include "emmintrin.h"
@@ -101,6 +104,16 @@
 
 #endif
 
+#ifdef AVX
+
+#define SIMD_E_TYPE __m256i
+#define SIMD_E_BITS (256)
+
+#define SIMD_E_SET_ALL(a) _mm256_set1_epi32(a)
+
+#define SIMD_E_AND(a, b) _mm256_castpd_si256(_mm256_and_pd(_mm256_castsi256_pd(a), _mm256_castsi256_pd(b)))
+#define SIMD_E_OR(a, b) _mm256_castpd_si256(_mm256_or_pd(_mm256_castsi256_pd(a), _mm256_castsi256_pd(b)))
+#endif
 // ------------ END SIMD macros --------------------
 
 

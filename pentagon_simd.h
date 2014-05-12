@@ -62,19 +62,34 @@ void PentagonSIMD::FWI(SIMD_TYPE* a, SIMD_TYPE* b, SIMD_TYPE* c, int n, int cols
 	for (k = 0; k < n; ++k) {
 		for (i = 0; i < n; i += UI) {
 			for (j = 0; j < inner_cols; j += UJ) {
-				for (i1 = i; i1 < i+UI; ++i1) {
+#ifdef AVX
+                for (i1 = i; i1 < i+UI; ++i1) {
 					SIMD_INT_TYPE a_i1_k = ((SIMD_INT_TYPE*)a)[i1 * cols * SIMD_INT_COUNT + (k / SIMD_INT_BITS)];
 					SIMD_INT_TYPE bitmask = ((a_i1_k >> (k % SIMD_INT_BITS)) & 1) * (-1);
+                    SIMD_E_TYPE mask = SIMD_E_SET_ALL(bitmask);
+					for (j1 = j; j1 < j+UJ; j1 += 2) {
+                        SIMD_E_TYPE *b_e = (SIMD_E_TYPE*) b,
+                                    *c_e = (SIMD_E_TYPE*) c;
+                        SIMD_E_TYPE rh = SIMD_E_AND(mask, b_e[(k * cols + j1) / 2]);
+                        SIMD_E_TYPE c_e_i1_j1 = c_e[(i1 * cols + j1) / 2];
+						c_e[(i1 * cols + j1) / 2] = SIMD_E_OR(c_e_i1_j1, rh);
+					}
+                }
+#else
+                for (i1 = i; i1 < i+UI; ++i1) {
+                    SIMD_INT_TYPE a_i1_k = ((SIMD_INT_TYPE*)a)[i1 * cols * SIMD_INT_COUNT + (k / SIMD_INT_BITS)];
+                    SIMD_INT_TYPE bitmask = ((a_i1_k >> (k % SIMD_INT_BITS)) & 1) * (-1);
                     SIMD_TYPE mask = SIMD_SET_ALL(bitmask);
-					for (j1 = j; j1 < j+UJ; ++j1) {
+                    for (j1 = j; j1 < j+UJ; ++j1) {
                         SIMD_TYPE rh = SIMD_AND(mask, b[k * cols + j1]);
                         SIMD_TYPE c_i1_j1 = c[i1 * cols + j1];
-						c[i1 * cols + j1] = SIMD_OR(c_i1_j1, rh);
-					}
-				}
-			}
-		}
-	}
+                        c[i1 * cols + j1] = SIMD_OR(c_i1_j1, rh);
+                    }
+                }
+#endif
+            }
+        }
+    }
 }
 
 void PentagonSIMD::FWIabc(SIMD_TYPE*__restrict__ a, SIMD_TYPE*__restrict__ b, SIMD_TYPE*__restrict__ c, int n, int cols) {
@@ -153,7 +168,12 @@ void PentagonSIMD::allocate(int num_of_vars)
 	num_of_vars_ = num_of_vars;
 	cols_ = num_of_vars / SIMD_BITS;
 
+#ifdef AVX
+    assert( UJ >= 2);
+    sub_ = (SIMD_TYPE*) (new SIMD_E_TYPE[num_of_vars * cols_]);
+#else
     sub_ = new SIMD_TYPE[num_of_vars * cols_];
+#endif
     for (int i = 0; i < num_of_vars * cols_; i++) {
         sub_[i] = SIMD_FROM_INT(0);
     }
