@@ -302,6 +302,13 @@ void Benchmark::benchBP()
 
 void Benchmark::benchSIMD()
 {
+#ifdef AVX
+	printf("SIMD is using AVX\n");
+#elif defined SSE
+	printf("SIMD is using SSE\n");
+#else
+    printf("SIMD is using SSE\n");
+#endif
 	int i,j;
 	PentagonSIMD* pent = new PentagonSIMD[nDoms];
 	for (i=0;i<nDoms;++i)

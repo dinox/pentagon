@@ -33,7 +33,7 @@
 #define SUB_BITS (32)
 #define EXPAND_LOWEST_BIT(a) (((a)&1)*(-1))
 
-#define OP_COUNT(n) (2*(n)*(n)*(n) + 50*(n)*(n))
+#define OP_COUNT(n) (3*(n)*(n)*(n) + 10*(n)*(n))
 
 // ------------ AVX / SSE macros for SIMD implementation ------------
 #ifdef AVX

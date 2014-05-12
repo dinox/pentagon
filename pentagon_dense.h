@@ -66,22 +66,7 @@ std::set<int> PentagonDM::getSubFor(int var)
 			r.insert(i);
 	return r;
 }
-/*
-void PentagonDM::subLameClosure()
-{
-    for (int i = 0; i < num_of_vars_; i++) {
-        for (int j = i+1; j < num_of_vars_; j++) {
-            if (sub_[i * num_of_vars_ + j]) {
-                for (int k = j+1; k < num_of_vars_; k++) {
-                    if (sub_[j * num_of_vars_ + k]) {
-                    	sub_[i * num_of_vars_ + k] = 1;
-                    }
-                }
-            }
-        }
-    }
-}
-*/
+
 void PentagonDM::subClosure()
 {
 	// Floyd-Warshall
