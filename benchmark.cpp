@@ -226,7 +226,7 @@ void Benchmark::benchSTL()
 			}
 	}
 
-	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "STL", (double)OP_COUNT(nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
+	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "STL", (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
 }
 
 void Benchmark::benchFWT()
@@ -261,7 +261,7 @@ void Benchmark::benchFWT()
 			}
 	}
 
-	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "FWT", (double)OP_COUNT(nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
+	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "FWT", (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
 
 }
 
@@ -297,7 +297,7 @@ void Benchmark::benchBP()
 			}
 	}
 
-	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "BP", (double)OP_COUNT(nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
+	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "BP", (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
 }
 
 void Benchmark::benchSIMD()
@@ -339,7 +339,7 @@ void Benchmark::benchSIMD()
 			}
 	}
 
-	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "SIMD", (double)OP_COUNT(nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
+	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "SIMD", (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
 }
 
 void print_usage()
