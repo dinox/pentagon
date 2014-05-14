@@ -59,6 +59,7 @@ public:
 void PentagonSIMD::FWI(SIMD_TYPE* a, SIMD_TYPE* b, SIMD_TYPE* c, int n, int cols) {
 	int inner_cols = n / SIMD_BITS;
 	int k, i, j, i1, j1;
+    // 2*N^3 OPS
 	for (k = 0; k < n; ++k) {
 		for (i = 0; i < n; i += UI) {
 			for (j = 0; j < inner_cols; j += UJ) {
@@ -100,16 +101,31 @@ void PentagonSIMD::FWIabc(SIMD_TYPE*__restrict__ a, SIMD_TYPE*__restrict__ b, SI
 		for (j = 0; j < inner_cols; j += UJ) {
 			for (k = 0; k < n; k += UK) {
                 for (k1 = k; k1 < k+UK; ++k1) {
-                    for (i1 = i; i1 < i+UI; ++i1) {
-                    	SIMD_INT_TYPE a_i1_k = ((SIMD_INT_TYPE*)a)[i1 * cols * SIMD_INT_COUNT + (k / SIMD_INT_BITS)];
-						SIMD_INT_TYPE bitmask = ((a_i1_k >> (k % SIMD_INT_BITS)) & 1) * (-1);
-						SIMD_TYPE mask = SIMD_SET_ALL(bitmask);
-						for (j1 = j; j1 < j+UJ; ++j1) {
-							SIMD_TYPE rh = SIMD_AND(mask, b[k * cols + j1]);
-							SIMD_TYPE c_i1_j1 = c[i1 * cols + j1];
-							c[i1 * cols + j1] = SIMD_OR(c_i1_j1, rh);
-						}
+#ifdef AVX
+                for (i1 = i; i1 < i+UI; ++i1) {
+					SIMD_INT_TYPE a_i1_k = ((SIMD_INT_TYPE*)a)[i1 * cols * SIMD_INT_COUNT + (k / SIMD_INT_BITS)];
+					SIMD_INT_TYPE bitmask = ((a_i1_k >> (k % SIMD_INT_BITS)) & 1) * (-1);
+                    SIMD_E_TYPE mask = SIMD_E_SET_ALL(bitmask);
+					for (j1 = j; j1 < j+UJ; j1 += 2) {
+                        SIMD_E_TYPE *b_e = (SIMD_E_TYPE*) b,
+                                    *c_e = (SIMD_E_TYPE*) c;
+                        SIMD_E_TYPE rh = SIMD_E_AND(mask, b_e[(k * cols + j1) / 2]);
+                        SIMD_E_TYPE c_e_i1_j1 = c_e[(i1 * cols + j1) / 2];
+						c_e[(i1 * cols + j1) / 2] = SIMD_E_OR(c_e_i1_j1, rh);
+					}
+                }
+#else
+                for (i1 = i; i1 < i+UI; ++i1) {
+                    SIMD_INT_TYPE a_i1_k = ((SIMD_INT_TYPE*)a)[i1 * cols * SIMD_INT_COUNT + (k / SIMD_INT_BITS)];
+                    SIMD_INT_TYPE bitmask = ((a_i1_k >> (k % SIMD_INT_BITS)) & 1) * (-1);
+                    SIMD_TYPE mask = SIMD_SET_ALL(bitmask);
+                    for (j1 = j; j1 < j+UJ; ++j1) {
+                        SIMD_TYPE rh = SIMD_AND(mask, b[k * cols + j1]);
+                        SIMD_TYPE c_i1_j1 = c[i1 * cols + j1];
+                        c[i1 * cols + j1] = SIMD_OR(c_i1_j1, rh);
                     }
+                }
+#endif
 				}
 			}
 		}
