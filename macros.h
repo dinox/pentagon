@@ -29,11 +29,13 @@
 
 #define CPU_FREQ 2200000000ll
 
+#define OP_COUNT(n) (3*(n)*(n)*(n) + 10*(n)*(n))
+
+// ------------ macros for BP implementation ------------
+
 #define SUB_TYPE uint32_t
 #define SUB_BITS (32)
 #define EXPAND_LOWEST_BIT(a) (((a)&1)*(-1))
-
-#define OP_COUNT(n) (3*(n)*(n)*(n) + 10*(n)*(n))
 
 // ------------ AVX / SSE macros for SIMD implementation ------------
 #ifdef AVX

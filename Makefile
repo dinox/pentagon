@@ -43,4 +43,4 @@ run: clean all
 	./benchmark benchfile b4096
 
 clean:
-	rm -f benchmark
+	rm -f benchmark benchmark.o

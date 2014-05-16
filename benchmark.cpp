@@ -13,6 +13,19 @@
 #include <ctime>
 #include <cstring>
 
+#ifdef ENABLE_CSV
+
+#ifndef CSV_FILE
+#define CSV_FILE "output.csv"
+#endif
+
+#ifndef CSV_DELIMITER
+#define CSV_DELIMITER ','
+#endif
+
+FILE* csv = fopen(CSV_FILE, "a");
+#endif
+
 int rand_between(int x, int y) // [x,y)
 {
 	return rand() % (y-x) + x;
@@ -188,7 +201,11 @@ void Benchmark::benchDM()
 
 	t.stop();
 
-	printf("%8s%12.3lf%10s%10.2lf%8s\n", "DM", (double)OP_COUNT(nVars)/(double)t.get_cycles(), "--", (double)t.get_cycles() / (double)CPU_FREQ, "--");
+	double perf = (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles();
+	printf("%8s%12.3lf%10s%10.2lf%8s\n", "DM", perf, "--", (double)t.get_cycles() / (double)CPU_FREQ, "--");
+#ifdef ENABLE_CSV
+	fprintf(csv, "%lf%c", perf, CSV_DELIMITER);
+#endif
 
 	dmCycles = t.get_cycles();
 	dmDomain = pent;
@@ -226,7 +243,11 @@ void Benchmark::benchSTL()
 			}
 	}
 
-	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "STL", (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
+	double perf = (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles();
+	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "STL", perf, dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
+#ifdef ENABLE_CSV
+	fprintf(csv, "%lf%c", perf, CSV_DELIMITER);
+#endif
 }
 
 void Benchmark::benchFWT()
@@ -261,8 +282,11 @@ void Benchmark::benchFWT()
 			}
 	}
 
-	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "FWT", (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
-
+	double perf = (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles();
+	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "FWT", perf, dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
+#ifdef ENABLE_CSV
+	fprintf(csv, "%lf%c", perf, CSV_DELIMITER);
+#endif
 }
 
 void Benchmark::benchBP()
@@ -297,7 +321,11 @@ void Benchmark::benchBP()
 			}
 	}
 
-	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "BP", (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
+	double perf = (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles();
+	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "BP", perf, dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
+#ifdef ENABLE_CSV
+	fprintf(csv, "%lf%c", perf, CSV_DELIMITER);
+#endif
 }
 
 void Benchmark::benchSIMD()
@@ -339,7 +367,11 @@ void Benchmark::benchSIMD()
 			}
 	}
 
-	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "SIMD", (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles(), dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
+	double perf = (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles();
+	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "SIMD", perf, dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
+#ifdef ENABLE_CSV
+	fprintf(csv, "%lf%c", perf, CSV_DELIMITER);
+#endif
 }
 
 void print_usage()
@@ -354,11 +386,24 @@ void print_usage()
 void Benchmark::BenchAll()
 {
 	printf("%8s%12s%10s%10s%8s\n", "Domain", "Ops/cycle", "Perf", "Time", "Verify");
-	//benchDM();
-	//benchFWT();
+#ifdef ENABLE_DM
+	benchDM();
+#endif
+#ifdef ENABLE_STL
+	benchSTL();
+#endif
+#ifdef ENABLE_FWT
+	benchFWT();
+#endif
+#ifdef ENABLE_BP
 	benchBP();
+#endif
+#ifdef ENABLE_SIMD
 	benchSIMD();
-	//benchSTL();
+#endif
+#ifdef ENABLE_CSV
+	fprintf(csv, "\n");
+#endif
 }
 
 int main(int argc, char** argv)
@@ -382,5 +427,10 @@ int main(int argc, char** argv)
 			print_usage();
 		}
 	}
+
+#ifdef ENABLE_CSV
+	fclose(csv);
+#endif
+
 	return 0;
 }
