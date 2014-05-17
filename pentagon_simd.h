@@ -99,8 +99,7 @@ void PentagonSIMD::FWIabc(SIMD_TYPE*__restrict__ a, SIMD_TYPE*__restrict__ b, SI
 	int i, j, k, i1, j1, k1;
 	for (i = 0; i < n; i += UI) {
 		for (j = 0; j < inner_cols; j += UJ) {
-			for (k = 0; k < n; k += UK) {
-                for (k1 = k; k1 < k+UK; ++k1) {
+			for (k = 0; k < n; ++k) {
 #ifdef AVX
                 for (i1 = i; i1 < i+UI; ++i1) {
 					SIMD_INT_TYPE a_i1_k = ((SIMD_INT_TYPE*)a)[i1 * cols * SIMD_INT_COUNT + (k / SIMD_INT_BITS)];
@@ -126,7 +125,6 @@ void PentagonSIMD::FWIabc(SIMD_TYPE*__restrict__ a, SIMD_TYPE*__restrict__ b, SI
                     }
                 }
 #endif
-				}
 			}
 		}
 	}

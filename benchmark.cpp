@@ -201,7 +201,7 @@ void Benchmark::benchDM()
 
 	t.stop();
 
-	double perf = (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles();
+	double perf = (double)OP_COUNT((unsigned long long) nVars, (unsigned long long) nJoins)/(double)t.get_cycles();
 	printf("%8s%12.3lf%10s%10.2lf%8s\n", "DM", perf, "--", (double)t.get_cycles() / (double)CPU_FREQ, "--");
 #ifdef ENABLE_CSV
 	fprintf(csv, "%lf%c", perf, CSV_DELIMITER);
@@ -244,7 +244,7 @@ void Benchmark::benchSTL()
 			}
 	}
 
-	double perf = (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles();
+	double perf = (double)OP_COUNT((unsigned long long) nVars, (unsigned long long) nJoins)/(double)t.get_cycles();
 	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "STL", perf, dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
 #ifdef ENABLE_CSV
 	fprintf(csv, "%lf%c", perf, CSV_DELIMITER);
@@ -283,7 +283,7 @@ void Benchmark::benchFWT()
 			}
 	}
 
-	double perf = (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles();
+	double perf = (double)OP_COUNT((unsigned long long) nVars, (unsigned long long) nJoins)/(double)t.get_cycles();
 	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "FWT", perf, dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
 #ifdef ENABLE_CSV
 	fprintf(csv, "%lf%c", perf, CSV_DELIMITER);
@@ -329,7 +329,7 @@ void Benchmark::benchBP()
 	}
 #endif
 
-	double perf = (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles();
+	double perf = (double)OP_COUNT((unsigned long long) nVars, (unsigned long long) nJoins)/(double)t.get_cycles();
 	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "BP", perf, dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
 #ifdef ENABLE_CSV
 	fprintf(csv, "%lf%c", perf, CSV_DELIMITER);
@@ -380,7 +380,7 @@ void Benchmark::benchSIMD()
 			}
 	}
 
-	double perf = (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles();
+	double perf = (double)OP_COUNT((unsigned long long) nVars, (unsigned long long) nJoins)/(double)t.get_cycles();
 	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "SIMD", perf, dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
 #ifdef ENABLE_CSV
 	fprintf(csv, "%lf%c", perf, CSV_DELIMITER);

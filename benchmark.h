@@ -2,6 +2,7 @@
 #define __BENCHMARK__
 
 #include "pentagon_dense.h"
+#include "pentagon_bp.h"
 #include <vector>
 #include <stddef.h>
 using namespace std;
@@ -32,7 +33,11 @@ private:
 	vector < pair<int,int> > joins;
 
 	unsigned long long dmCycles;
+#ifdef COMPARE_AGAINST_BP
+	PentagonBP* dmDomain;
+#else
 	PentagonDM* dmDomain;
+#endif
 };
 
 #endif
