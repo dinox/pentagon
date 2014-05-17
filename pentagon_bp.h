@@ -94,10 +94,10 @@ void PentagonBP::FWIabc(SUB_TYPE*__restrict__ a, SUB_TYPE*__restrict__ b, SUB_TY
 	for (i = 0; i < n; i += UI) {
 		for (j = 0; j < inner_cols; j += UJ) {
 			for (k = 0; k < n; k += UK) {
-				for (k1 = k; k1 < k+UK; ++k1) {
-					for (i1 = i; i1 < i+UI; ++i1) {
-						t = EXPAND_LOWEST_BIT(a[i1 * cols + (k1 / SUB_BITS)] >> (k1 % SUB_BITS));
-						for (j1 = j; j1 < j+UJ; ++j1) {
+				for (i1 = i; i1 < i+UI; ++i1) {
+					for (j1 = j; j1 < j+UJ; ++j1) {
+						for (k1 = k; k1 < k+UK; ++k1) {
+							t = EXPAND_LOWEST_BIT(a[i1 * cols + (k1 / SUB_BITS)] >> (k1 % SUB_BITS));
 							c[i1 * cols + j1] |= t & b[k1 * cols + j1];
 						}
 					}

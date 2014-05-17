@@ -27,7 +27,7 @@ ifeq ($(SSE),1)
 endif
 
 ifeq ($(CORE2),1)
-	override CPPFLAGS += -m64 -march=core2 -msse4.1 -DSSE
+	override CPPFLAGS += -m64 -march=core2 -msse4.1
 endif
 
 all: benchmark
