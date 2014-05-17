@@ -206,9 +206,10 @@ void Benchmark::benchDM()
 #ifdef ENABLE_CSV
 	fprintf(csv, "%lf%c", perf, CSV_DELIMITER);
 #endif
-
+#ifndef COMPARE_AGAINST_BP
 	dmCycles = t.get_cycles();
 	dmDomain = pent;
+#endif
 }
 
 void Benchmark::benchSTL()
@@ -312,6 +313,12 @@ void Benchmark::benchBP()
 	t.stop();
 
 	bool verified = false;
+
+#ifdef COMPARE_AGAINST_BP
+	dmCycles = t.get_cycles();
+	dmDomain = pent;
+	verified = true;
+#else
 	if (dmDomain != NULL) {
 		verified = true;
 		for (int i=0;i<nDoms;++i)
@@ -320,6 +327,7 @@ void Benchmark::benchBP()
 				break;
 			}
 	}
+#endif
 
 	double perf = (double)OP_COUNT((unsigned long long) nVars)/(double)t.get_cycles();
 	printf("%8s%12.3lf%9.3lfx%10.2lf%8s\n", "BP", perf, dmCycles / (double)t.get_cycles(), (double)t.get_cycles() / (double)CPU_FREQ, verified ? "OK" : "FAIL");
@@ -330,12 +338,17 @@ void Benchmark::benchBP()
 
 void Benchmark::benchSIMD()
 {
+#ifdef ENABLE_SIMD
+
 #ifdef AVX
 	printf("SIMD is using AVX\n");
 #elif defined SSE
 	printf("SIMD is using SSE\n");
 #else
+#error "Probably you don't want to test SIMD on scalar unit :)"
     printf("SIMD is using scalar unit\n");
+#endif
+
 #endif
 	int i,j;
 	PentagonSIMD* pent = new PentagonSIMD[nDoms];
