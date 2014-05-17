@@ -79,7 +79,6 @@ void PentagonSIMD::FWI(SIMD_TYPE* a, SIMD_TYPE* b, SIMD_TYPE* c, int n, int cols
 #else
 
 #ifdef SIMD_UNROLL_FWI // unroll UJ by 4 and UI by 2
-
                 int addr_a, addr_b, addr_c0, addr_c1;
                 SIMD_INT_TYPE tmp0, tmp1;
                 SIMD_TYPE a0, a1;
@@ -161,8 +160,8 @@ void PentagonSIMD::FWIabc(SIMD_TYPE*__restrict__ a, SIMD_TYPE*__restrict__ b, SI
 	int i, j, k, i1, j1, k1;
 	for (i = 0; i < n; i += UI) {
 		for (j = 0; j < inner_cols; j += UJ) {
-			for (k = 0; k < n; ++k) {
 #ifdef AVX
+			for (k = 0; k < n; ++k) {
 				for (i1 = i; i1 < i+UI; ++i1) {
 					SIMD_INT_TYPE a_i1_k = ((SIMD_INT_TYPE*)a)[i1 * cols * SIMD_INT_COUNT + (k / SIMD_INT_BITS)];
 					SIMD_INT_TYPE bitmask = ((a_i1_k >> (k % SIMD_INT_BITS)) & 1) * (-1);
@@ -175,10 +174,10 @@ void PentagonSIMD::FWIabc(SIMD_TYPE*__restrict__ a, SIMD_TYPE*__restrict__ b, SI
 						c_e[(i1 * cols + j1) / 2] = SIMD_E_OR(c_e_i1_j1, rh);
 					}
 				}
-#else
+			}
 
-#ifdef UNROLL_FWT
-
+#elif (defined SIMD_UNROLL_FWIABC) && (defined SSE)
+			for (k = 0; k < n; k += UK) {
 				for (i1 = i; i1 < i+UI; ++i1) {
 					for (j1 = j; j1 < j+UJ; ++j1) {
 						SIMD_TYPE c0 = c[i1 * cols + j1];
@@ -220,7 +219,9 @@ void PentagonSIMD::FWIabc(SIMD_TYPE*__restrict__ a, SIMD_TYPE*__restrict__ b, SI
 						c[i1 * cols + j1] = c0;
 					}
 				}
+			}
 #else
+			for (k = 0; k < n; ++k) {
 				for (i1 = i; i1 < i+UI; ++i1) {
                     SIMD_INT_TYPE a_i1_k = ((SIMD_INT_TYPE*)a)[i1 * cols * SIMD_INT_COUNT + (k / SIMD_INT_BITS)];
                     SIMD_INT_TYPE bitmask = ((a_i1_k >> (k % SIMD_INT_BITS)) & 1) * (-1);
@@ -231,10 +232,8 @@ void PentagonSIMD::FWIabc(SIMD_TYPE*__restrict__ a, SIMD_TYPE*__restrict__ b, SI
                         c[i1 * cols + j1] = SIMD_OR(c_i1_j1, rh);
                     }
                 }
-#endif
-
-#endif
 			}
+#endif
 		}
 	}
 }
@@ -287,8 +286,11 @@ void PentagonSIMD::allocate(int num_of_vars)
 
 	assert( num_of_vars % L1_SIZE == 0 );
 	assert( L1_SIZE % (SIMD_BITS * UJ) == 0 );
-#ifdef SIMD_UNROLL
+#ifdef SIMD_UNROLL_FWI
 	assert( (UI % 2 == 0) && (UJ % 4 == 0) );
+#endif
+#ifdef SIMD_UNROLL_FWIABC
+	assert( UK % 4 == 0 );
 #endif
 
 	num_of_vars_ = num_of_vars;
