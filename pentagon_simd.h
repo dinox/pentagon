@@ -220,6 +220,65 @@ void PentagonSIMD::FWIabc(SIMD_TYPE*__restrict__ a, SIMD_TYPE*__restrict__ b, SI
 					}
 				}
 			}
+#elif (defined SIMD_UNROLL_FWI) && (defined SSE) // copy of the unroll FWI -- fallback case
+			for (k = 0; k < n; ++k) {
+				int addr_a, addr_b, addr_c0, addr_c1;
+				SIMD_INT_TYPE tmp0, tmp1;
+				SIMD_TYPE a0, a1;
+				SIMD_TYPE b0, b1, b2, b3;
+				SIMD_TYPE c00, c01, c02, c03, c10, c11, c12, c13;
+
+				for (i1 = i; i1 < i+UI; i1 += 2) {
+					// load A
+					addr_a = i1 * cols * SIMD_INT_COUNT + (k / SIMD_INT_BITS);
+					tmp0 = ((SIMD_INT_TYPE*)a)[addr_a];
+					tmp1 = ((SIMD_INT_TYPE*)a)[addr_a + cols * SIMD_INT_COUNT];
+					tmp0 >>= (k % SIMD_INT_BITS);
+					tmp1 >>= (k % SIMD_INT_BITS);
+					a0 = SIMD_SET_ALL(EXPAND_LOWEST_BIT(tmp0));
+					a1 = SIMD_SET_ALL(EXPAND_LOWEST_BIT(tmp1));
+
+					for (j1 = j; j1 < j+UJ; j1 += 4) {
+						// load B
+						addr_b = k * cols + j1;
+						b0 = b[addr_b];
+						b1 = b[addr_b+1];
+						b2 = b[addr_b+2];
+						b3 = b[addr_b+3];
+						// load C
+						addr_c0 = i1 * cols + j1;
+						c00 = c[addr_c0];
+						c01 = c[addr_c0+1];
+						c02 = c[addr_c0+2];
+						c03 = c[addr_c0+3];
+						addr_c1 = addr_c0 + cols;
+						c10 = c[addr_c1];
+						c11 = c[addr_c1+1];
+						c12 = c[addr_c1+2];
+						c13 = c[addr_c1+3];
+
+						// compute
+						c00 = SIMD_OR(c00, SIMD_AND(a0, b0));
+						c01 = SIMD_OR(c01, SIMD_AND(a0, b1));
+						c02 = SIMD_OR(c02, SIMD_AND(a0, b2));
+						c03 = SIMD_OR(c03, SIMD_AND(a0, b3));
+						c10 = SIMD_OR(c10, SIMD_AND(a1, b0));
+						c11 = SIMD_OR(c11, SIMD_AND(a1, b1));
+						c12 = SIMD_OR(c12, SIMD_AND(a1, b2));
+						c13 = SIMD_OR(c13, SIMD_AND(a1, b3));
+
+						// store
+						c[addr_c0] = c00;
+						c[addr_c0+1] = c01;
+						c[addr_c0+2] = c02;
+						c[addr_c0+3] = c03;
+						c[addr_c1] = c10;
+						c[addr_c1+1] = c11;
+						c[addr_c1+2] = c12;
+						c[addr_c1+3] = c13;
+					}
+				}
+			}
 #else
 			for (k = 0; k < n; ++k) {
 				for (i1 = i; i1 < i+UI; ++i1) {
