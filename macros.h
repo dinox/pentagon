@@ -29,6 +29,7 @@
 
 #define CPU_FREQ 2200000000ll
 
+// PAY ATTENTION HERE
 #define OP_COUNT(nVars, nJoins) ((3*(nVars)*(nVars)*(nVars) + 10*(nVars)*(nVars))*nJoins)
 
 // ------------ macros for BP implementation ------------
