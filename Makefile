@@ -30,6 +30,8 @@ ifeq ($(CORE2),1)
 	override CPPFLAGS += -m64 -march=core2 -msse4.1
 endif
 
+override CPPFLAGS += -DENABLE_SIMD -DSIMD_UNROLL_FWI -DSIMD_UNROLL_FWIABC
+
 all: benchmark
 
 benchmark: benchmark.cpp $(HEADERS)
